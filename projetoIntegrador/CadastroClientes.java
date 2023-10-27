@@ -117,7 +117,7 @@ public class CadastroClientes {
                 boolean cadastradoComSucesso = cadastrarCliente(cliente);
 
                 if (cadastradoComSucesso) {
-                    JOptionPane.showMessageDialog(janela, "Cliente cadastrado com sucesso.\nSeu Login é: " + cliente.getLogin());
+                    JOptionPane.showMessageDialog(janela, "Cliente cadastrado com sucesso.\nSeu Login é: " + cliente.getUsuario());
                 } else {
                     JOptionPane.showMessageDialog(janela, "Falha ao cadastrar o cliente.");
                 }
@@ -170,7 +170,7 @@ public class CadastroClientes {
                 PreparedStatement stmt = bd.con.prepareStatement(sql);
 
                 // Preenche os parâmetros da consulta com os dados do cliente
-                stmt.setString(1, cliente.getLogin()); // Considerando que "Usuario" é o login
+                stmt.setString(1, cliente.getUsuario()); // Considerando que "Usuario" é o login
                 stmt.setString(2, cliente.getNome());
                 stmt.setString(3, cliente.getTelefone());
                 stmt.setString(4, cliente.getTelefoneResponsavel());
@@ -203,23 +203,6 @@ public class CadastroClientes {
             // Fecha a conexão com o banco de dados, independentemente do resultado
             bd.close();
         }
-    }
-
-    // Função para gerar um login com as 3 primeiras letras do nome e 5 números aleatórios
-    public static String gerarLogin(String nome) {
-        StringBuilder login = new StringBuilder();
-        if (nome.length() >= 3) {
-            login.append(nome.substring(0, 3)); // 3 primeiras letras do nome
-        } else {
-            login.append(nome); // Caso o nome seja menor que 3 letras
-        }
-
-        Random random = new Random();
-        for (int i = 0; i < 5; i++) {
-            login.append(random.nextInt(10)); // 5 números aleatórios
-        }
-
-        return login.toString();
     }
 
     public static JFormattedTextField criarCampoCPF() {

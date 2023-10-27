@@ -1,5 +1,7 @@
 package projetoIntegrador;
 
+import java.util.Random;
+
 public class Cliente {
     private String nome;
     private String email;
@@ -10,7 +12,7 @@ public class Cliente {
     private String estado;
     private String cidade;
     private String comoNosConheceu;
-    private String login;
+    private String usuario;
 
     public Cliente(String nome, String email, String cpf, String dataNascimento, String telefone, String telefoneResponsavel, String estado, String cidade, String comoNosConheceu) {
         this.nome = nome;
@@ -22,7 +24,7 @@ public class Cliente {
         this.estado = estado;
         this.cidade = cidade;
         this.comoNosConheceu = comoNosConheceu;
-        this.login = gerarLogin(nome);
+        this.usuario = gerarUsuario(nome);
     }
 
     // Getters e Setters (métodos de acesso) para os atributos
@@ -98,13 +100,24 @@ public class Cliente {
         this.comoNosConheceu = comoNosConheceu;
     }
 
-    public String getLogin() {
-        return login;
+    public String getUsuario() {
+        return usuario;
     }
 
-    // Método para gerar o login com base no nome
-    private String gerarLogin(String nome) {
-        // Implemente a geração do login com base no nome, se necessário
-        return ""; // Este é um exemplo, você pode adaptá-lo conforme suas necessidades
+    // Método para gerar o usuario com base no nome
+    private static String gerarUsuario(String nome) {
+        StringBuilder usuario = new StringBuilder();
+        if (nome.length() >= 3) {
+        	usuario.append(nome.substring(0, 3)); // 3 primeiras letras do nome
+        } else {
+        	usuario.append(nome); // Caso o nome seja menor que 3 letras
+        }
+
+        Random random = new Random();
+        for (int i = 0; i < 5; i++) {
+        	usuario.append(random.nextInt(10)); // 5 números aleatórios
+        }
+
+        return usuario.toString();
     }
 }
