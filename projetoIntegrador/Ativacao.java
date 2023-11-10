@@ -18,8 +18,9 @@ import javax.swing.SwingUtilities;
 
 public class Ativacao {
 
-    private static Connection con;
-    private static boolean modoEdicao = false;
+	   private static Connection con;
+	    private static boolean modoEdicao = false;
+	    private static JButton botaoAtivar;
     
     private static JTextField campoNome;
     private static JTextField campoTelefone;
@@ -42,24 +43,27 @@ public class Ativacao {
             }
         });
     }
-
+    
+    /* 
+     * Inicia a tela de ativação.
+     */
     public static void criarTelaAtivacaoCliente() {
-    	con = new BD().con;
-        JFrame janela = new JFrame("Ativação de Conta (Cliente)");
-        janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        janela.setSize(400, 850);
+    	  con = new BD().con;
+          JFrame janela = new JFrame("Ativação de Conta (Cliente)");
+          janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+          janela.setSize(400, 740);
 
-        JPanel painel = new JPanel();
-        painel.setLayout(null);
+          JPanel painel = new JPanel();
+          painel.setLayout(null);
 
         JLabel rotuloInstrucoes = new JLabel("Insira o código de ativação:");
         rotuloInstrucoes.setBounds(20, 20, 350, 20);
 
         campoAtivacao = new JTextField(); // Certifique-se de inicializar o campo aqui
-        campoAtivacao.setBounds(20, 50, 350, 30);
+        campoAtivacao.setBounds(20, 40, 250, 30);
 
-        JButton botaoProcurarDados = new JButton("Procurar Dados"); // Alterado o texto do botão
-        botaoProcurarDados.setBounds(100, 90, 200, 30); // Alterado o tamanho do botão
+        JButton botaoProcurarDados = new JButton("Procurar"); // Alterado o texto do botão
+        botaoProcurarDados.setBounds(270, 40, 100, 30); // Alterado o tamanho do botão
         botaoProcurarDados.setBackground(new Color(0, 191, 255));
         botaoProcurarDados.setFont(new Font("Arial", Font.BOLD, 12));
 
@@ -70,79 +74,81 @@ public class Ativacao {
                 boolean ativacaoValida = verificarAtivacaoCliente(codigoAtivacao);
 
                 if (ativacaoValida) {
-                    preencherDadosCliente(); // Preencher os dados ao procurar
+                    preencherDadosCliente();
+                    ativarModoVisualizacao(); // Defina o modo de visualização ao preencher os dados
                 } else {
                     JOptionPane.showMessageDialog(janela, "Código inválido.");
+                    limparCampos(); // Limpe os campos se o código for inválido
                 }
             }
         });
 
         // Rótulo e campo de Nome
         JLabel rotuloNome = new JLabel("Nome:");
-        rotuloNome.setBounds(20, 150, 350, 20);
+        rotuloNome.setBounds(20, 100, 350, 20);
         campoNome = new JTextField();
-        campoNome.setBounds(20, 180, 350, 30);
+        campoNome.setBounds(20, 120, 350, 30);
         campoNome.setEditable(false); // Inicia como não editável
 
         // Rótulo e campo de Telefone
         JLabel rotuloTelefone = new JLabel("Telefone:");
-        rotuloTelefone.setBounds(20, 220, 350, 20);
+        rotuloTelefone.setBounds(20, 160, 350, 20);
         campoTelefone = new JTextField();
-        campoTelefone.setBounds(20, 250, 350, 30);
+        campoTelefone.setBounds(20, 180, 350, 30);
         campoTelefone.setEditable(false); // Inicia como não editável
 
         // Rótulo e campo de Telefone Responsável
         JLabel rotuloTelefoneResponsavel = new JLabel("Telefone Responsável:");
-        rotuloTelefoneResponsavel.setBounds(20, 280, 350, 20);
+        rotuloTelefoneResponsavel.setBounds(20, 220, 350, 20);
         campoTelefoneResponsavel = new JTextField();
-        campoTelefoneResponsavel.setBounds(20, 310, 350, 30);
+        campoTelefoneResponsavel.setBounds(20, 240, 350, 30);
         campoTelefoneResponsavel.setEditable(false); // Inicia como não editável
 
         // Rótulo e campo de CPF
         JLabel rotuloCPF = new JLabel("CPF:");
-        rotuloCPF.setBounds(20, 340, 350, 20);
+        rotuloCPF.setBounds(20, 280, 350, 20);
         campoCPF = new JTextField();
-        campoCPF.setBounds(20, 370, 350, 30);
+        campoCPF.setBounds(20, 300, 350, 30);
         campoCPF.setEditable(false); // Inicia como não editável
 
         // Rótulo e campo de Data de Nascimento
         JLabel rotuloDataNascimento = new JLabel("Data de Nascimento:");
-        rotuloDataNascimento.setBounds(20, 400, 350, 20);
+        rotuloDataNascimento.setBounds(20, 340, 350, 20);
         campoDataNascimento = new JTextField();
-        campoDataNascimento.setBounds(20, 430, 350, 30);
+        campoDataNascimento.setBounds(20, 360, 350, 30);
         campoDataNascimento.setEditable(false); // Inicia como não editável
 
         // Rótulo e campo de Email
         JLabel rotuloEmail = new JLabel("Email:");
-        rotuloEmail.setBounds(20, 460, 350, 20);
+        rotuloEmail.setBounds(20, 400, 350, 20);
         campoEmail = new JTextField();
-        campoEmail.setBounds(20, 490, 350, 30);
+        campoEmail.setBounds(20, 420, 350, 30);
         campoEmail.setEditable(false); // Inicia como não editável
 
         // Rótulo e campo de Cidade
         JLabel rotuloCidade = new JLabel("Cidade:");
-        rotuloCidade.setBounds(20, 520, 350, 20);
+        rotuloCidade.setBounds(20, 460, 350, 20);
         campoCidade = new JTextField();
-        campoCidade.setBounds(20, 550, 350, 30);
+        campoCidade.setBounds(20, 480, 350, 30);
         campoCidade.setEditable(false); // Inicia como não editável
 
         // Rótulo e campo de Estado
         JLabel rotuloEstado = new JLabel("Estado:");
-        rotuloEstado.setBounds(20, 580, 350, 20);
+        rotuloEstado.setBounds(20, 520, 350, 20);
         campoEstado = new JTextField();
-        campoEstado.setBounds(20, 610, 350, 30);
+        campoEstado.setBounds(20, 540, 350, 30);
         campoEstado.setEditable(false); // Inicia como não editável
 
         // Rótulo e campo de Como Conheceu
         JLabel rotuloComoConheceu = new JLabel("Como Conheceu:");
-        rotuloComoConheceu.setBounds(20, 640, 350, 20);
+        rotuloComoConheceu.setBounds(20, 580, 350, 20);
         campoComoConheceu = new JTextField();
-        campoComoConheceu.setBounds(20, 670, 350, 30);
+        campoComoConheceu.setBounds(20, 600, 350, 30);
         campoComoConheceu.setEditable(false); // Inicia como não editável
 
         // Botão para editar/salvar
         JButton botaoEditarSalvar = new JButton("Editar");
-        botaoEditarSalvar.setBounds(50, 750, 100, 30);
+        botaoEditarSalvar.setBounds(50, 650, 100, 30);
         botaoEditarSalvar.setBackground(new Color(0, 191, 255));
         botaoEditarSalvar.setFont(new Font("Arial", Font.BOLD, 12));
 
@@ -152,17 +158,28 @@ public class Ativacao {
                     botaoEditarSalvar.setText("Editar");
                     modoEdicao = false;
                     ativarModoVisualizacao();
+                    botaoAtivar.setEnabled(true); // Habilita o botão "Ativar"
+                    
+                    // Aqui você deve adicionar código para salvar as alterações
+                    if (salvarAlteracoesCliente(codigoAtivacao)) {
+                        JOptionPane.showMessageDialog(janela, "Dados atualizados com sucesso.");
+                        ativarContaDoCliente(codigoAtivacao); // Ativar a conta após a atualização
+                    } else {
+                        JOptionPane.showMessageDialog(janela, "Falha ao atualizar os dados.");
+                    }
                 } else {
                     botaoEditarSalvar.setText("Salvar");
                     modoEdicao = true;
                     ativarModoEdicao();
+                    botaoAtivar.setEnabled(false); // Desabilita o botão "Ativar"
                 }
             }
         });
+
         
      // Botão para ativar a conta
-        JButton botaoAtivar = new JButton("Ativar");
-        botaoAtivar.setBounds(220, 750, 100, 30); // Ajuste a posição conforme necessário
+        botaoAtivar = new JButton("Ativar"); // Mova a inicialização do botão para cá
+        botaoAtivar.setBounds(220, 650, 100, 30);
         botaoAtivar.setBackground(new Color(0, 191, 255));
         botaoAtivar.setFont(new Font("Arial", Font.BOLD, 12));
 
@@ -171,9 +188,10 @@ public class Ativacao {
                 String codigoAtivacao = campoAtivacao.getText();
 
                 if (modoEdicao) {
+                    // Aqui você deve adicionar código para salvar as alterações
                     if (salvarAlteracoesCliente(codigoAtivacao)) {
                         JOptionPane.showMessageDialog(janela, "Dados atualizados com sucesso.");
-                        ativarContaDoCliente(codigoAtivacao); // Atualize o campo "ativado"
+                        ativarContaDoCliente(codigoAtivacao); // Ativar a conta após a atualização
                     } else {
                         JOptionPane.showMessageDialog(janela, "Falha ao atualizar os dados.");
                     }
@@ -181,7 +199,7 @@ public class Ativacao {
                     boolean ativacaoValida = verificarAtivacaoCliente(codigoAtivacao);
 
                     if (ativacaoValida) {
-                        ativarContaDoCliente(codigoAtivacao); // Atualize o campo "ativado"
+                        ativarContaDoCliente(codigoAtivacao); // Ativar a conta
                         JOptionPane.showMessageDialog(janela, "Conta ativada com sucesso.");
                     } else {
                         JOptionPane.showMessageDialog(janela, "Código inválido.");
@@ -222,10 +240,13 @@ public class Ativacao {
         janela.setVisible(true);
     }
 
+    /**
+     * 
+     */
     public static void preencherDadosCliente() {
         usuarioAtivacao = campoAtivacao.getText(); // Usar o código inserido no campo
         try {
-            String sql = "SELECT Nome, Telefone, Telefone_responsavel, CPF, Data_nasc, email, Cidade, Estado, Como_conheceu FROM Cliente WHERE Usuario = ?";
+            String sql = "SELECT Nome, Telefone, Telefone_responsavel, CPF, Data_nasc, email, Cidade, Estado, Como_conheceu FROM Cliente WHERE Usuario = ? AND Ativado = 0"; // Adicione a condição Ativado = 0
             PreparedStatement st = con.prepareStatement(sql);
             st.setString(1, usuarioAtivacao);
             ResultSet rs = st.executeQuery();
@@ -239,11 +260,28 @@ public class Ativacao {
                 campoCidade.setText(rs.getString("Cidade"));
                 campoEstado.setText(rs.getString("Estado"));
                 campoComoConheceu.setText(rs.getString("Como_conheceu"));
+            } else {
+                JOptionPane.showMessageDialog(null, "Cliente já ativado ou código inválido.");
+                // Limpar os campos se o cliente estiver ativado ou o código for inválido
+                limparCampos();
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
+    public static void limparCampos() {
+        campoNome.setText("");
+        campoTelefone.setText("");
+        campoTelefoneResponsavel.setText("");
+        campoCPF.setText("");
+        campoDataNascimento.setText("");
+        campoEmail.setText("");
+        campoCidade.setText("");
+        campoEstado.setText("");
+        campoComoConheceu.setText("");
+    }
+
 
 
     public static void ativarModoEdicao() {
@@ -272,12 +310,11 @@ public class Ativacao {
     
     public static void ativarContaDoCliente(String codigoAtivacao) {
         try {
-            String sql = "UPDATE Cliente SET Ativado = 1 WHERE Usuario = ?";
+            String sql = "UPDATE Cliente SET Ativado = 1 WHERE Usuario = ? AND Ativado = 0";
             PreparedStatement st = con.prepareStatement(sql);
             st.setString(1, codigoAtivacao);
             int rowsAffected = st.executeUpdate();
             if (rowsAffected > 0) {
-                JOptionPane.showMessageDialog(null, "Conta ativada com sucesso.");
             } else {
                 JOptionPane.showMessageDialog(null, "Falha ao ativar a conta.");
             }
@@ -286,9 +323,11 @@ public class Ativacao {
         }
     }
 
+
+
     public static boolean salvarAlteracoesCliente(String codigoAtivacao) {
         try {
-            String sql = "UPDATE Cliente SET Nome = ?, Telefone = ?, Telefone_responsavel = ?, CPF = ?, Data_nasc = ?, email = ?, Cidade = ?, Estado = ?, Como_conheceu = ?, Ativado = 1 WHERE Usuario = ?";
+            String sql = "UPDATE Cliente SET Nome = ?, Telefone = ?, Telefone_responsavel = ?, CPF = ?, Data_nasc = ?, email = ?, Cidade = ?, Estado = ?, Como_conheceu = ? WHERE Usuario = ? AND Ativado = ?";
             PreparedStatement st = con.prepareStatement(sql);
             st.setString(1, campoNome.getText());
             st.setString(2, campoTelefone.getText());
@@ -310,6 +349,7 @@ public class Ativacao {
 
         return false;
     }
+
 
 
     public static boolean verificarAtivacaoCliente(String codigoAtivacao) {
