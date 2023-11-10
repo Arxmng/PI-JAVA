@@ -180,7 +180,7 @@ public class CadastroClientes {
                 stmt.setString(8, cliente.getCidade());
                 stmt.setString(9, cliente.getEstado());
                 stmt.setString(10, cliente.getComoNosConheceu());
-                stmt.setBoolean(11, true); // Considerando que "Ativado" é um campo booleano
+                stmt.setBoolean(10, false); 
 
                 // Executa a consulta para inserir o cliente no banco de dados
                 int linhasAfetadas = stmt.executeUpdate();
