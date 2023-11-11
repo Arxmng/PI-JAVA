@@ -2,6 +2,9 @@ package projetoIntegrador;
 
 import java.util.Random;
 
+/**
+ * Representa um cliente com informações pessoais e dados de registro.
+ */
 public class Cliente {
 	 private String nome;
 	    private String email;
@@ -14,6 +17,19 @@ public class Cliente {
 	    private String comoConheceu;
 	    private String usuario;
 
+	    /**
+	     * Cria um novo objeto Cliente com informações pessoais.
+	     *
+	     * @param nome               O nome do cliente.
+	     * @param email              O endereço de e-mail do cliente.s
+	     * @param cpf                O número de CPF do cliente.
+	     * @param dataNascimento     A data de nascimento do cliente.
+	     * @param telefone           O número de telefone do cliente.
+	     * @param telefoneResponsavel O número de telefone do responsável do cliente.
+	     * @param estado             O estado onde o cliente reside.
+	     * @param cidade             A cidade onde o cliente reside.
+	     * @param comoConheceu       A fonte pela qual o cliente conheceu o serviço.
+	     */
 	    public Cliente(String nome, String email, String cpf, String dataNascimento, String telefone, String telefoneResponsavel, String estado, String cidade, String comoConheceu) {
 	        this.nome = nome;
 	        this.email = email;
@@ -27,6 +43,29 @@ public class Cliente {
 	        this.usuario = gerarUsuario(nome);
 	    }
     
+	    /**
+	     * Gera um nome de usuário baseado no nome do cliente.
+	     * Sendo composto pelos três primeiros dígitos do nome
+	     * e 5 números gerados aleatoriamente. 
+	     * @param nome O nome do cliente.
+	     * @return O nome de usuário gerado.
+	     */
+	    private static String gerarUsuario(String nome) {
+	        StringBuilder usuario = new StringBuilder();
+	        if (nome.length() >= 3) {
+	        	usuario.append(nome.substring(0, 3)); // 3 primeiras letras do nome
+	        } else {
+	        	usuario.append(nome); // Caso o nome seja menor que 3 letras
+	        }
+
+	        Random random = new Random();
+	        for (int i = 0; i < 5; i++) {
+	        	usuario.append(random.nextInt(10)); // 5 números aleatórios
+	        }
+
+	        return usuario.toString();
+	    }
+	    
     // Getters e Setters (métodos de acesso) para os atributos
     public String getNome() {
         return nome;
@@ -104,20 +143,4 @@ public class Cliente {
         return usuario;
     }
 
-    // Método para gerar o usuario com base no nome
-    private static String gerarUsuario(String nome) {
-        StringBuilder usuario = new StringBuilder();
-        if (nome.length() >= 3) {
-        	usuario.append(nome.substring(0, 3)); // 3 primeiras letras do nome
-        } else {
-        	usuario.append(nome); // Caso o nome seja menor que 3 letras
-        }
-
-        Random random = new Random();
-        for (int i = 0; i < 5; i++) {
-        	usuario.append(random.nextInt(10)); // 5 números aleatórios
-        }
-
-        return usuario.toString();
-    }
 }

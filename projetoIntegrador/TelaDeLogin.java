@@ -5,18 +5,25 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Classe que representa a tela de login do sistema.
+ * Permite que funcionários e clientes façam login informando seu usuário e senha.
+ */
 public class TelaDeLogin extends JFrame {
-	private JTextField campoUsuario;
+    private JTextField campoUsuario;
     private JPasswordField campoSenha;
     private UsuarioDAO usuarioDAO;
 
+    /**
+     * Construtor da classe. Inicializa a interface da tela de login.
+     */
     public TelaDeLogin() {
         // Configurações da janela
         setTitle("Tela de Login");
         setSize(400, 200);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        
+
         usuarioDAO = new UsuarioDAO();
 
         // Crie um JTabbedPane
@@ -36,6 +43,12 @@ public class TelaDeLogin extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * Cria uma aba de login com campos de entrada de usuário e senha.
+     *
+     * @param tipo O tipo de login (Funcionário ou Cliente).
+     * @return O painel da aba de login criada.
+     */
     private JPanel criarAba(String tipo) {
         JPanel painel = new JPanel();
         painel.setLayout(new GridLayout(4, 2));
@@ -81,6 +94,11 @@ public class TelaDeLogin extends JFrame {
         return painel;
     }
 
+    /**
+     * Método principal que inicia a aplicação da tela de login.
+     *
+     * @param args Argumentos de linha de comando (não utilizados neste caso).
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
