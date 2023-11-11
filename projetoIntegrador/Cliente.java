@@ -3,30 +3,30 @@ package projetoIntegrador;
 import java.util.Random;
 
 public class Cliente {
-    private String nome;
-    private String email;
-    private String cpf;
-    private String dataNascimento;
-    private String telefone;
-    private String telefoneResponsavel;
-    private String estado;
-    private String cidade;
-    private String comoNosConheceu;
-    private String usuario;
+	 private String nome;
+	    private String email;
+	    private String cpf;
+	    private String dataNascimento;
+	    private String telefone;
+	    private String telefoneResponsavel;
+	    private String estado;
+	    private String cidade;
+	    private String comoConheceu;
+	    private String usuario;
 
-    public Cliente(String nome, String email, String cpf, String dataNascimento, String telefone, String telefoneResponsavel, String estado, String cidade, String comoNosConheceu) {
-        this.nome = nome;
-        this.email = email;
-        this.cpf = cpf;
-        this.dataNascimento = dataNascimento;
-        this.telefone = telefone;
-        this.telefoneResponsavel = telefoneResponsavel;
-        this.estado = estado;
-        this.cidade = cidade;
-        this.comoNosConheceu = comoNosConheceu;
-        this.usuario = gerarUsuario(nome);
-    }
-
+	    public Cliente(String nome, String email, String cpf, String dataNascimento, String telefone, String telefoneResponsavel, String estado, String cidade, String comoConheceu) {
+	        this.nome = nome;
+	        this.email = email;
+	        this.cpf = cpf;
+	        this.dataNascimento = dataNascimento;
+	        this.telefone = telefone;
+	        this.telefoneResponsavel = telefoneResponsavel;
+	        this.estado = estado;
+	        this.cidade = cidade;
+	        this.comoConheceu = comoConheceu;
+	        this.usuario = gerarUsuario(nome);
+	    }
+    
     // Getters e Setters (métodos de acesso) para os atributos
     public String getNome() {
         return nome;
@@ -92,12 +92,12 @@ public class Cliente {
         this.cidade = cidade;
     }
 
-    public String getComoNosConheceu() {
-        return comoNosConheceu;
+    public String getComoConheceu() {
+        return comoConheceu;
     }
 
-    public void setComoNosConheceu(String comoNosConheceu) {
-        this.comoNosConheceu = comoNosConheceu;
+    public void setComoConheceu(String comoConheceu) {
+        this.comoConheceu = comoConheceu;
     }
 
     public String getUsuario() {

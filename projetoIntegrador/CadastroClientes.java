@@ -6,7 +6,6 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
-import java.util.Random;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
@@ -20,7 +19,6 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 import javax.swing.text.MaskFormatter;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -69,8 +67,8 @@ public class CadastroClientes {
         JLabel rotuloCidade = new JLabel("Cidade:");
         JTextField campoCidade = new JTextField(20);
 
-        JLabel rotuloComoNosConheceu = new JLabel("Como nos conheceu:");
-        JTextField campoComoNosConheceu = new JTextField(20);
+        JLabel rotulocomoConheceu = new JLabel("Como nos conheceu:");
+        JTextField campocomoConheceu = new JTextField(20);
 
         // Cria um botão para cadastrar
         JButton botaoCadastrar = new JButton("Cadastrar");
@@ -92,11 +90,10 @@ public class CadastroClientes {
                 campoTelefoneResponsavel.setText("");
                 campoEstado.setText("");
                 campoCidade.setText("");
-                campoComoNosConheceu.setText("");
+                campocomoConheceu.setText("");
             }
         });
 
-        // Adiciona um ouvinte de ação ao botão cadastrar
         botaoCadastrar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Obtenha os dados do cliente a partir dos campos
@@ -108,11 +105,11 @@ public class CadastroClientes {
                 String telefoneResponsavel = campoTelefoneResponsavel.getText();
                 String estado = campoEstado.getText();
                 String cidade = campoCidade.getText();
-                String comoNosConheceu = campoComoNosConheceu.getText();
+                String comoConheceu = campocomoConheceu.getText();
 
                 // Crie um objeto Cliente com os dados
-                Cliente cliente = new Cliente(nome, email, cpf, dataNascimento, telefone, telefoneResponsavel, estado, cidade, comoNosConheceu);
-
+                Cliente cliente = new Cliente(nome, email, cpf, dataNascimento, telefone, telefoneResponsavel, estado, cidade, comoConheceu);
+                
                 // Realize o cadastro
                 boolean cadastradoComSucesso = cadastrarCliente(cliente);
 
@@ -123,6 +120,7 @@ public class CadastroClientes {
                 }
             }
         });
+
 
         // Adiciona os componentes ao painel
         painel.add(rotuloNome);
@@ -141,8 +139,8 @@ public class CadastroClientes {
         painel.add(campoEstado);
         painel.add(rotuloCidade);
         painel.add(campoCidade);
-        painel.add(rotuloComoNosConheceu);
-        painel.add(campoComoNosConheceu);
+        painel.add(rotulocomoConheceu);
+        painel.add(campocomoConheceu);
         painel.add(botaoLimpar); // Botão para limpar campos
         painel.add(botaoCadastrar);
 
@@ -179,8 +177,8 @@ public class CadastroClientes {
                 stmt.setString(7, cliente.getEmail());
                 stmt.setString(8, cliente.getCidade());
                 stmt.setString(9, cliente.getEstado());
-                stmt.setString(10, cliente.getComoNosConheceu());
-                stmt.setBoolean(10, false); 
+                stmt.setString(10, cliente.getComoConheceu());
+                stmt.setBoolean(11, false); 
 
                 // Executa a consulta para inserir o cliente no banco de dados
                 int linhasAfetadas = stmt.executeUpdate();
