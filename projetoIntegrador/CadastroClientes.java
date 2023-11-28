@@ -22,17 +22,8 @@ import javax.swing.text.MaskFormatter;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-/**
- * Classe que representa a tela de cadastro de clientes.
- * Permite o cadastro de informações de clientes, como nome, CPF, data de nascimento, etc.
- */
 public class CadastroClientes {
 
-    /**
-     * Método principal que inicia a aplicação de cadastro de clientes.
-     *
-     * @param args Argumentos de linha de comando (não utilizados neste caso).
-     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -41,9 +32,6 @@ public class CadastroClientes {
         });
     }
 
-    /**
-     * Cria a interface da tela de cadastro de clientes.
-     */
     public static void criarTelaCadastroClientes() {
         // Cria uma janela JFrame
         JFrame janela = new JFrame("Cadastro de Clientes");
@@ -133,6 +121,7 @@ public class CadastroClientes {
             }
         });
 
+
         // Adiciona os componentes ao painel
         painel.add(rotuloNome);
         painel.add(campoNome);
@@ -165,12 +154,7 @@ public class CadastroClientes {
         janela.setVisible(true);
     }
 
-    /**
-     * Função para realizar o cadastro do cliente no banco de dados.
-     *
-     * @param cliente O objeto Cliente a ser cadastrado.
-     * @return true se o cadastro for bem-sucedido, false caso contrário.
-     */
+    // Função para realizar o cadastro do cliente
     public static boolean cadastrarCliente(Cliente cliente) {
         BD bd = new BD(); // Crie uma instância da classe BD para gerenciar a conexão
         try {
@@ -219,11 +203,6 @@ public class CadastroClientes {
         }
     }
 
-    /**
-     * Cria e retorna um campo de CPF formatado.
-     *
-     * @return O campo de CPF formatado.
-     */
     public static JFormattedTextField criarCampoCPF() {
         try {
             MaskFormatter mascara = new MaskFormatter("###.###.###-##");
@@ -235,14 +214,9 @@ public class CadastroClientes {
         }
     }
 
-    /**
-     * Cria e retorna um campo de telefone formatado.
-     *
-     * @return O campo de telefone formatado.
-     */
     public static JFormattedTextField criarCampoTelefone() {
         try {
-            MaskFormatter mascara = new MaskFormatter("(##) #####-####");
+            MaskFormatter mascara = new MaskFormatter("(##) ####-####");
             JFormattedTextField campoTelefone = new JFormattedTextField(mascara);
             return campoTelefone;
         } catch (ParseException e) {
@@ -251,11 +225,6 @@ public class CadastroClientes {
         }
     }
 
-    /**
-     * Cria e retorna um campo de data de nascimento formatado.
-     *
-     * @return O campo de data de nascimento formatado.
-     */
     public static JFormattedTextField criarCampoDataNascimento() {
         try {
             MaskFormatter mascara = new MaskFormatter("##/##/####");
@@ -267,11 +236,6 @@ public class CadastroClientes {
         }
     }
 
-    /**
-     * Cria e retorna um campo de estado com limite de 2 caracteres.
-     *
-     * @return O campo de estado com limite de 2 caracteres.
-     */
     public static JTextField criarCampoEstado() {
         JTextField campoEstado = new JTextField(2);
 
