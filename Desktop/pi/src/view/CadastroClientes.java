@@ -24,6 +24,7 @@ import javax.swing.text.DocumentFilter;
 import javax.swing.text.MaskFormatter;
 
 import model.Cliente;
+import model.UsuarioDAO;
 import services.BD;
 
 public class CadastroClientes {
@@ -115,19 +116,17 @@ public class CadastroClientes {
 				String cidade = campoCidade.getText();
 				String comoConheceu = campocomoConheceu.getText();
 
-				// Crie um objeto Cliente com os dados
-				Cliente cliente = new Cliente(nome, email, cpf, dataNascimento, telefone, telefoneResponsavel, estado,
-						cidade, comoConheceu);
+				 // Crie um objeto Cliente com os dados
+		        Cliente cliente = new Cliente(nome, email, cpf, dataNascimento, telefone, telefoneResponsavel, estado, cidade, comoConheceu);
 
-				// Realize o cadastro
-				boolean cadastradoComSucesso = cadastrarCliente(cliente);
+		        // Realize o cadastro
+		        boolean cadastradoComSucesso = UsuarioDAO.cadastrarCliente(cliente);
 
-				if (cadastradoComSucesso) {
-					JOptionPane.showMessageDialog(null,
-							"Cliente cadastrado com sucesso.\nSeu Login é: " + cliente.getUsuario());
-				} else {
-					JOptionPane.showMessageDialog(null, "Falha ao cadastrar o cliente.");
-				}
+		        if (cadastradoComSucesso) {
+		            JOptionPane.showMessageDialog(null, "Cliente cadastrado com sucesso.\nSeu Login é: " + cliente.getUsuario());
+		        } else {
+		            JOptionPane.showMessageDialog(null, "Falha ao cadastrar o cliente.");
+		        }
 			}
 		});
 
@@ -221,39 +220,5 @@ public class CadastroClientes {
         });
     }
 
-	public static boolean cadastrarCliente(Cliente cliente) {
-		BD bd = new BD();
-
-		try {
-			if (bd.getConnection()) {
-				String sql = "INSERT INTO Cliente (Usuario, Nome, Telefone, Telefone_responsavel, CPF, Data_nasc, email, Cidade, Estado, Como_conheceu, Ativado) "
-						+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-				PreparedStatement stmt = bd.con.prepareStatement(sql);
-
-				stmt.setString(1, cliente.getUsuario());
-				stmt.setString(2, cliente.getNome());
-				stmt.setString(3, cliente.getTelefone());
-				stmt.setString(4, cliente.getTelefoneResponsavel());
-				stmt.setString(5, cliente.getCpf());
-				stmt.setString(6, cliente.getDataNascimento());
-				stmt.setString(7, cliente.getEmail());
-				stmt.setString(8, cliente.getCidade());
-				stmt.setString(9, cliente.getEstado());
-				stmt.setString(10, cliente.getComoConheceu());
-				stmt.setBoolean(11, false);
-
-				int linhasAfetadas = stmt.executeUpdate();
-
-				return linhasAfetadas > 0;
-			} else {
-				return false;
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		} finally {
-			bd.close();
-		}
-	}
+	
 }
