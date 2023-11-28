@@ -103,7 +103,8 @@ public class CadastroClientes {
 			}
 		});
 
-		botaoCadastrar.addActionListener(new ActionListener() {
+		JButton jButton = new JButton();
+		jButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// Obtenha os dados do cliente a partir dos campos
 				String nome = campoNome.getText();
@@ -120,7 +121,8 @@ public class CadastroClientes {
 		        Cliente cliente = new Cliente(nome, email, cpf, dataNascimento, telefone, telefoneResponsavel, estado, cidade, comoConheceu);
 
 		        // Realize o cadastro
-		        boolean cadastradoComSucesso = UsuarioDAO.cadastrarCliente(cliente);
+		        UsuarioDAO usuarioDAO = new UsuarioDAO();
+		        boolean cadastradoComSucesso = usuarioDAO.cadastrarCliente(cliente);
 
 		        if (cadastradoComSucesso) {
 		            JOptionPane.showMessageDialog(null, "Cliente cadastrado com sucesso.\nSeu Login é: " + cliente.getUsuario());
