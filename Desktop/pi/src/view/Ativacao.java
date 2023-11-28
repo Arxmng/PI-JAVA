@@ -201,26 +201,27 @@ public class Ativacao {
 		botaoEditarSalvar.setFont(new Font("Arial", Font.BOLD, 12));
 
 		botaoEditarSalvar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (modoEdicao) {
-					botaoEditarSalvar.setText("Editar");
-					modoEdicao = false;
-					ativarModoVisualizacao();
-					botaoAtivar.setEnabled(true); // Habilita o botão "Ativar"
+		    public void actionPerformed(ActionEvent e) {
+		        if (modoEdicao) {
+		            botaoEditarSalvar.setText("Editar");
+		            modoEdicao = false;
+		            ativarModoVisualizacao();
+		            botaoAtivar.setEnabled(true); // Habilita o botão "Ativar"
 
-					if (salvarAlteracoesCliente(codigoAtivacao)) {
-						JOptionPane.showMessageDialog(janela, "Dados atualizados com sucesso.");
-						ativarContaDoCliente(codigoAtivacao); // Ativar a conta após a atualização
-					} else {
-						JOptionPane.showMessageDialog(janela, "Falha ao atualizar os dados.");
-					}
-				} else {
-					botaoEditarSalvar.setText("Salvar");
-					modoEdicao = true;
-					ativarModoEdicao();
-					botaoAtivar.setEnabled(false); // Desabilita o botão "Ativar"
-				}
-			}
+		            if (salvarAlteracoesCliente(codigoAtivacao)) {
+		                JOptionPane.showMessageDialog(janela, "Dados atualizados com sucesso.");
+		                ativarContaDoCliente(codigoAtivacao); // Ativar a conta após a atualização
+		                limparCampos(); // Limpe os campos após salvar as alterações
+		            } else {
+		                JOptionPane.showMessageDialog(janela, "Falha ao atualizar os dados.");
+		            }
+		        } else {
+		            botaoEditarSalvar.setText("Salvar");
+		            modoEdicao = true;
+		            ativarModoEdicao();
+		            botaoAtivar.setEnabled(false); // Desabilita o botão "Ativar"
+		        }
+		    }
 		});
 
 		// Botão para ativar a conta
@@ -237,6 +238,7 @@ public class Ativacao {
 		            if (salvarAlteracoesCliente(codigoAtivacao)) {
 		                JOptionPane.showMessageDialog(janela, "Dados atualizados com sucesso.");
 		                ativarContaDoCliente(codigoAtivacao); // Ativa a conta após a atualização
+		                limparCampos(); // Limpe os campos após ativar a conta
 		            } else {
 		                JOptionPane.showMessageDialog(janela, "Falha ao atualizar os dados.");
 		            }
@@ -247,9 +249,7 @@ public class Ativacao {
 		            if (ativacaoValida) {
 		                ativarContaDoCliente(codigoAtivacao); // Ativa a conta
 		                JOptionPane.showMessageDialog(janela, "Conta ativada com sucesso.");
-		            } else {
-		                // Remova esta linha, pois a notificação agora é mostrada pelo método verificarAtivacaoCliente
-		                // JOptionPane.showMessageDialog(janela, "Código inválido.");
+		                limparCampos(); // Limpe os campos após ativar a conta
 		            }
 		        }
 		    }
