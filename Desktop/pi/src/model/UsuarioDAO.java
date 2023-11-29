@@ -1,8 +1,10 @@
 package model;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
 
 import javax.swing.JOptionPane;
 
@@ -193,6 +195,38 @@ public class UsuarioDAO {
 
 		return false;
 	}
+	
+	public void adicionarSessao(String usuario, String codigoMaquina, Date dataSQL, Time horaInicio, Time horaFim, String codigoFuncionario) {
+	    try {
+	        String sql = "INSERT INTO Sessao (preco, dia, hora_inicio, hora_fim, Usuario, Codigo_func, Codigo_maq) " +
+	                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
+	        
+	        // Preço pode ser 0, conforme mencionado
+	        float preco = 0;
+
+	        try (PreparedStatement st = bd.con.prepareStatement(sql)) {
+	            st.setFloat(1, preco);
+	            st.setDate(2, dataSQL);
+	            st.setTime(3, horaInicio);
+	            st.setTime(4, horaFim);
+	            st.setString(5, usuario);
+	            st.setString(6, codigoFuncionario);
+	            st.setString(7, codigoMaquina);
+
+	            int rowsAffected = st.executeUpdate();
+
+	            if (rowsAffected > 0) {
+	                JOptionPane.showMessageDialog(null, "Sessão adicionada com sucesso.");
+	            } else {
+	                JOptionPane.showMessageDialog(null, "Falha ao adicionar a sessão.");
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	}
+
+
 
 	/**
 	 * Fecha a conexão com o banco de dados. Chame este método quando finalizar
@@ -201,4 +235,6 @@ public class UsuarioDAO {
 	public void fecharConexao() {
 		bd.close();
 	}
+
+	
 }

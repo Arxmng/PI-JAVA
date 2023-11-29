@@ -22,6 +22,7 @@ public class TelaLoginFuncionario extends JFrame {
 	private JTextField campoUsuario;
     private JPasswordField campoSenha;
     private TelaPrincipal telaPrincipal;
+    private String loginFuncionario; 
 
     public TelaLoginFuncionario(TelaPrincipal telaPrincipal) {
         this.telaPrincipal = telaPrincipal;
@@ -65,7 +66,8 @@ public class TelaLoginFuncionario extends JFrame {
 
         // Verificar as credenciais usando o UsuarioDAO
         if (usuarioDAO.verificarCredenciaisFuncionario(codFunc)) {
-            new TelaFuncionario();
+            loginFuncionario = codFunc; // Armazenar o login do funcionário
+            new TelaFuncionario(this); // Passar a referência da tela de login
             dispose();
             telaPrincipal.dispose();
         } else {
@@ -73,4 +75,7 @@ public class TelaLoginFuncionario extends JFrame {
         }
     }
 
+    public String getLoginFuncionario() {
+        return loginFuncionario;
+    }
 }

@@ -10,7 +10,7 @@ public class TelaFuncionario extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	public TelaFuncionario() {
+	public TelaFuncionario(TelaLoginFuncionario telaLoginFuncionario) {
         setTitle("Tela do Funcionário");
         setSize(300, 200);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -20,7 +20,7 @@ public class TelaFuncionario extends JFrame {
         JButton btnManipularFila = new JButton("Manipular Fila");
 
         btnAtivarCliente.addActionListener(e -> ativarCliente());
-        btnManipularFila.addActionListener(e -> manipularFila());
+        btnManipularFila.addActionListener(e -> manipularFila(telaLoginFuncionario.getLoginFuncionario()));
 
         setLayout(null);
 
@@ -36,7 +36,8 @@ public class TelaFuncionario extends JFrame {
     private void ativarCliente() {
         SwingUtilities.invokeLater(() -> Ativacao.criarTelaAtivacaoCliente());
     }
-    private void manipularFila() {
-    	 SwingUtilities.invokeLater(() -> new TelaDeFilas());
+    
+    private void manipularFila(String loginFuncionario) {
+        SwingUtilities.invokeLater(() -> new TelaDeFilas(loginFuncionario));
     }
 }

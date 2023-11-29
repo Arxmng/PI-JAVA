@@ -16,8 +16,10 @@ public class TelaDeFilas extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private Map<String, DefaultListModel<Cliente>> filas;
 	UsuarioDAO usuarioDAO = new UsuarioDAO();
-
-	public TelaDeFilas() {
+	private static String codigoFuncionarioLogado;
+	
+	public TelaDeFilas(String codigoFuncionarioLogado) {
+		TelaDeFilas.codigoFuncionarioLogado = codigoFuncionarioLogado;
 		setTitle("Tela de Filas");
 		setSize(600, 400);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -34,7 +36,6 @@ public class TelaDeFilas extends JFrame {
 
 			JPanel aba = new JPanel();
 			aba.setLayout(new BorderLayout());
-
 			JButton botaoAdicionar = new JButton("Adicionar Pessoa");
 			botaoAdicionar.addActionListener(new ActionListener() {
 				@Override
@@ -43,10 +44,26 @@ public class TelaDeFilas extends JFrame {
 					if (usuario != null && !usuario.isEmpty()) {
 						boolean clienteAtivo = usuarioDAO.verificarClienteAtivo(usuario);
 						if (clienteAtivo) {
-							Cliente cliente = new Cliente(usuario, modeloLista);
-							cliente.setHoraExpiracaoSessao(calcularHoraExpiracaoSessao(getDefaultCloseOperation()));
-							modeloLista.addElement(cliente);
-							iniciarTemporizador(cliente, modeloLista, getDefaultCloseOperation());
+							// Solicita ao usuário o tempo de sessão desejado
+							String tempoSessaoStr = JOptionPane.showInputDialog("Quanto tempo de sessão (em minutos)?");
+							if (tempoSessaoStr != null && !tempoSessaoStr.isEmpty()) {
+								try {
+									int tempoSessao = Integer.parseInt(tempoSessaoStr);
+									Cliente cliente = new Cliente(usuario, modeloLista);
+
+									// Adiciona uma nova sessão ao banco de dados
+									adicionarSessao(cliente, tempoSessao);
+
+									cliente.setHoraExpiracaoSessao(calcularHoraExpiracaoSessao(tempoSessao));
+									modeloLista.addElement(cliente);
+									iniciarTemporizador(cliente, modeloLista, tempoSessao);
+								} catch (NumberFormatException ex) {
+									JOptionPane.showMessageDialog(null,
+											"Por favor, insira um valor válido para o tempo de sessão.");
+								}
+							} else {
+								JOptionPane.showMessageDialog(null, "Tempo de sessão não especificado.");
+							}
 						} else {
 							JOptionPane.showMessageDialog(null,
 									"Cliente não encontrado ou não está ativo no banco de dados.");
@@ -95,28 +112,52 @@ public class TelaDeFilas extends JFrame {
 	}
 
 	private void iniciarTemporizador(Cliente cliente, DefaultListModel<Cliente> modeloLista, int tempoSessao) {
-	    if (cliente.getHoraEntradaSessao() != null) {
-	        long tempoMilissegundos = tempoSessao * 60 * 1000; // Convertendo minutos para milissegundos
-	        long horaExpiracaoMilissegundos = cliente.getHoraEntradaSessao().getTime() + tempoMilissegundos;
+		if (cliente.getHoraEntradaSessao() != null) {
+			long tempoMilissegundos = tempoSessao * 60 * 1000; // Convertendo minutos para milissegundos
+			long horaExpiracaoMilissegundos = cliente.getHoraEntradaSessao().getTime() + tempoMilissegundos;
 
-	        java.util.Timer temporizador = new java.util.Timer();
-	        temporizador.schedule(new TimerTask() {
-	            @Override
-	            public void run() {
-	                modeloLista.removeElement(cliente);
-	                temporizador.cancel();
-	            }
-	        }, horaExpiracaoMilissegundos);
-	    } else {
-	        System.out.println("A hora de entrada da sessão é null.");
-	    }
+			java.util.Timer temporizador = new java.util.Timer();
+			temporizador.schedule(new TimerTask() {
+				@Override
+				public void run() {
+					modeloLista.removeElement(cliente);
+					temporizador.cancel();
+				}
+			}, horaExpiracaoMilissegundos);
+		} else {
+			System.out.println("A hora de entrada da sessão é null.");
+		}
+	}
+
+	private void adicionarSessao(Cliente cliente, int tempoSessao) {
+		try {
+			// Obter o código da máquina (podendo ser adaptado para escolha do usuário)
+			String codigoMaquina = JOptionPane.showInputDialog("Insira o código da máquina:");
+
+			// Obter a data e hora atuais
+			java.util.Date dataAtual = new java.util.Date();
+			java.sql.Date dataSQL = new java.sql.Date(dataAtual.getTime());
+			java.sql.Time horaInicio = new java.sql.Time(dataAtual.getTime());
+
+			// Calcular a hora de fim adicionando o tempo de sessão em minutos
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(dataAtual);
+			calendar.add(Calendar.MINUTE, tempoSessao);
+			java.sql.Time horaFim = new java.sql.Time(calendar.getTimeInMillis());
+
+			// Adicionar a sessão com o código do funcionário logado
+			usuarioDAO.adicionarSessao(cliente.getUsuario(), codigoMaquina, dataSQL, horaInicio, horaFim,
+					codigoFuncionarioLogado);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				TelaDeFilas telaDeFilas = new TelaDeFilas();
+				TelaDeFilas telaDeFilas = new TelaDeFilas(codigoFuncionarioLogado);
 				telaDeFilas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				telaDeFilas.addWindowListener(new WindowAdapter() {
 					@Override
