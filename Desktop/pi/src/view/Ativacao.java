@@ -4,11 +4,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
@@ -19,82 +14,132 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.text.MaskFormatter;
 
-import services.BD;
+import model.Cliente;
+import model.UsuarioDAO;
 
 /**
  * Gerencia a ativação de contas de clientes. Ela permite que os funcionários
  * insiram o código (usuário) e atualizem os dados do cliente associado a esse
  * código, ativando para uso.
  */
-
 public class Ativacao {
 
-	private static Connection con;
-	private static boolean modoEdicao = false;
-	private static JButton botaoAtivar;
+    private static boolean modoEdicao = false;
 
-	private static JTextField campoNome;
-	private static JTextField campoTelefone;
-	private static JTextField campoTelefoneResponsavel;
-	private static JTextField campoCPF;
-	private static JTextField campoDataNascimento;
-	private static JTextField campoEmail;
-	private static JTextField campoCidade;
-	private static JTextField campoEstado;
-	private static JTextField campoComoConheceu;
-	private static String usuarioAtivacao;
-	private static JTextField campoAtivacao;
-	private static String codigoAtivacao;
+    private static JTextField campoNome;
+    private static JTextField campoTelefone;
+    private static JTextField campoTelefoneResponsavel;
+    private static JTextField campoCPF;
+    private static JTextField campoDataNascimento;
+    private static JTextField campoEmail;
+    private static JTextField campoCidade;
+    private static JTextField campoEstado;
+    private static JTextField campoComoConheceu;
+    private static JTextField campoAtivacao;
+    private static String codigoAtivacao;
+    private static JButton botaoEditarSalvar;
+    private static JButton botaoAtivar;
 
-	/**
-     * O método principal que inicia a aplicação.
-     *
-     * @param args Argumentos de linha de comando (não utilizados neste caso).
-     */
-	
-	public static void main(String[] args) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				criarTelaAtivacaoCliente();
-			}
-		});
-	}
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                criarTelaAtivacaoCliente();
+            }
+        });
+    }
 
-	public static void criarTelaAtivacaoCliente() {
-		con = new BD().con;
-		JFrame janela = new JFrame("Ativação de Conta (Cliente)");
-		janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		janela.setSize(400, 740);
+    public static void criarTelaAtivacaoCliente() {
+        UsuarioDAO usuarioDAO = new UsuarioDAO();
 
-		JPanel painel = new JPanel();
-		painel.setLayout(null);
+        JFrame janela = new JFrame("Ativação de Conta (Cliente)");
+        janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        janela.setSize(400, 740);
 
-		JLabel rotuloInstrucoes = new JLabel("Insira o código de ativação:");
-		rotuloInstrucoes.setBounds(20, 20, 350, 20);
+        JPanel painel = new JPanel();
+        painel.setLayout(null);
 
-		campoAtivacao = new JTextField();
-		campoAtivacao.setBounds(20, 40, 250, 30);
+        JLabel rotuloInstrucoes = new JLabel("Insira o código de ativação:");
+        rotuloInstrucoes.setBounds(20, 20, 350, 20);
 
-		JButton botaoProcurarDados = new JButton("Procurar");
-		botaoProcurarDados.setBounds(270, 40, 100, 30);
-		botaoProcurarDados.setBackground(new Color(0, 191, 255));
-		botaoProcurarDados.setFont(new Font("Arial", Font.BOLD, 12));
+        campoAtivacao = new JTextField();
+        campoAtivacao.setBounds(20, 40, 250, 30);
 
-		botaoProcurarDados.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		        codigoAtivacao = campoAtivacao.getText(); // Define o código de ativação
+        JButton botaoProcurarDados = new JButton("Procurar");
+        botaoProcurarDados.setBounds(270, 40, 100, 30);
+        botaoProcurarDados.setBackground(new Color(0, 191, 255));
+        botaoProcurarDados.setFont(new Font("Arial", Font.BOLD, 12));
 
-		        // Adicione o segundo parâmetro para decidir se deve mostrar a notificação
-		        boolean ativacaoValida = verificarAtivacaoCliente(codigoAtivacao, true);
+        botaoProcurarDados.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                codigoAtivacao = campoAtivacao.getText();
+                Cliente cliente = usuarioDAO.verificarAtivacaoCliente(codigoAtivacao, true);
 
-		        if (ativacaoValida) {
-		            preencherDadosCliente();
-		            ativarModoVisualizacao(); // Defina o modo de visualização ao preencher os dados
-		        } else {
-		            limparCampos(); // Limpe os campos se o código for inválido ou já ativado
-		        }
-		    }
-		});
+                if (cliente != null) {
+                    preencherDadosCliente();
+                    ativarModoVisualizacao();
+                } else {
+                    limparCampos();
+                }
+            }
+        });
+        
+        botaoEditarSalvar = new JButton("Editar");
+        botaoEditarSalvar.setBounds(50, 650, 100, 30);
+        botaoEditarSalvar.setBackground(new Color(0, 191, 255));
+        botaoEditarSalvar.setFont(new Font("Arial", Font.BOLD, 12));
+
+        botaoEditarSalvar.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (modoEdicao) {
+                    if (salvarAlteracoes()) {
+                        JOptionPane.showMessageDialog(janela, "Dados atualizados com sucesso.");
+                        usuarioDAO.ativarContaDoCliente(codigoAtivacao);
+                        limparCampos();
+                    } else {
+                        JOptionPane.showMessageDialog(janela, "Falha ao atualizar os dados.");
+                    }
+                } else {
+                    ativarModoEdicao();
+                }
+            }
+        });
+
+        botaoAtivar = new JButton("Ativar");
+        botaoAtivar.setBounds(220, 650, 100, 30);
+        botaoAtivar.setBackground(new Color(0, 191, 255));
+        botaoAtivar.setFont(new Font("Arial", Font.BOLD, 12));
+
+        botaoAtivar.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                UsuarioDAO usuarioDAO = new UsuarioDAO();
+                String codigoAtivacao = campoAtivacao.getText();
+
+                if (modoEdicao) {
+                    if (usuarioDAO.salvarAlteracoesCliente(codigoAtivacao, campoNome.getText(),
+                            campoTelefone.getText(), campoTelefoneResponsavel.getText(), campoCPF.getText(),
+                            campoDataNascimento.getText(), campoEmail.getText(), campoCidade.getText(),
+                            campoEstado.getText(), campoComoConheceu.getText())) {
+                        JOptionPane.showMessageDialog(janela, "Dados atualizados com sucesso.");
+                        usuarioDAO.ativarContaDoCliente(codigoAtivacao);
+                        limparCampos();
+                    } else {
+                        JOptionPane.showMessageDialog(janela, "Falha ao atualizar os dados.");
+                    }
+                } else {
+                    Cliente cliente = usuarioDAO.verificarAtivacaoCliente(codigoAtivacao, true);
+
+                    if (cliente != null) {
+                        usuarioDAO.ativarContaDoCliente(codigoAtivacao);
+                        JOptionPane.showMessageDialog(janela, "Conta ativada com sucesso.");
+                        limparCampos();
+                    } else {
+                        JOptionPane.showMessageDialog(janela, "Falha ao ativar a conta.");
+                    }
+                }
+            }
+        });
+
+        
 		// Rótulo e campo de Nome
 		JLabel rotuloNome = new JLabel("Nome:");
 		rotuloNome.setBounds(20, 100, 350, 20);
@@ -108,10 +153,10 @@ public class Ativacao {
 
 		MaskFormatter mascaraTelefone = null;
 		try {
-		    mascaraTelefone = new MaskFormatter("(##) ####-####");
-		    mascaraTelefone.setPlaceholderCharacter('_');
+			mascaraTelefone = new MaskFormatter("(##) ####-####");
+			mascaraTelefone.setPlaceholderCharacter('_');
 		} catch (Exception e) {
-		    e.printStackTrace();
+			e.printStackTrace();
 		}
 
 		campoTelefone = new JFormattedTextField(mascaraTelefone);
@@ -124,10 +169,10 @@ public class Ativacao {
 
 		MaskFormatter mascaraTelefoneResponsavel = null;
 		try {
-		    mascaraTelefoneResponsavel = new MaskFormatter("(##) ####-####");
-		    mascaraTelefoneResponsavel.setPlaceholderCharacter('_');
+			mascaraTelefoneResponsavel = new MaskFormatter("(##) ####-####");
+			mascaraTelefoneResponsavel.setPlaceholderCharacter('_');
 		} catch (Exception e) {
-		    e.printStackTrace();
+			e.printStackTrace();
 		}
 
 		campoTelefoneResponsavel = new JFormattedTextField(mascaraTelefoneResponsavel);
@@ -140,10 +185,10 @@ public class Ativacao {
 
 		MaskFormatter mascaraCPF = null;
 		try {
-		    mascaraCPF = new MaskFormatter("###.###.###-##");
-		    mascaraCPF.setPlaceholderCharacter('_'); // Caractere que aparecerá como espaço em branco
+			mascaraCPF = new MaskFormatter("###.###.###-##");
+			mascaraCPF.setPlaceholderCharacter('_'); // Caractere que aparecerá como espaço em branco
 		} catch (Exception e) {
-		    e.printStackTrace();
+			e.printStackTrace();
 		}
 
 		campoCPF = new JFormattedTextField(mascaraCPF);
@@ -156,10 +201,10 @@ public class Ativacao {
 
 		MaskFormatter mascaraDataNascimento = null;
 		try {
-		    mascaraDataNascimento = new MaskFormatter("##/##/####");
-		    mascaraDataNascimento.setPlaceholderCharacter('_');
+			mascaraDataNascimento = new MaskFormatter("##/##/####");
+			mascaraDataNascimento.setPlaceholderCharacter('_');
 		} catch (Exception e) {
-		    e.printStackTrace();
+			e.printStackTrace();
 		}
 
 		campoDataNascimento = new JFormattedTextField(mascaraDataNascimento);
@@ -195,67 +240,27 @@ public class Ativacao {
 		campoComoConheceu.setEditable(false); // Inicia como não editável
 
 		// Botão para editar/salvar
-		JButton botaoEditarSalvar = new JButton("Editar");
-		botaoEditarSalvar.setBounds(50, 650, 100, 30);
-		botaoEditarSalvar.setBackground(new Color(0, 191, 255));
-		botaoEditarSalvar.setFont(new Font("Arial", Font.BOLD, 12));
 
-		botaoEditarSalvar.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		        if (modoEdicao) {
-		            botaoEditarSalvar.setText("Editar");
-		            modoEdicao = false;
-		            ativarModoVisualizacao();
-		            botaoAtivar.setEnabled(true); // Habilita o botão "Ativar"
+		botaoEditarSalvar = new JButton("Editar");
+        botaoEditarSalvar.setBounds(50, 650, 100, 30);
+        botaoEditarSalvar.setBackground(new Color(0, 191, 255));
+        botaoEditarSalvar.setFont(new Font("Arial", Font.BOLD, 12));
 
-		            if (salvarAlteracoesCliente(codigoAtivacao)) {
-		                JOptionPane.showMessageDialog(janela, "Dados atualizados com sucesso.");
-		                ativarContaDoCliente(codigoAtivacao); // Ativar a conta após a atualização
-		                limparCampos(); // Limpe os campos após salvar as alterações
-		            } else {
-		                JOptionPane.showMessageDialog(janela, "Falha ao atualizar os dados.");
-		            }
-		        } else {
-		            botaoEditarSalvar.setText("Salvar");
-		            modoEdicao = true;
-		            ativarModoEdicao();
-		            botaoAtivar.setEnabled(false); // Desabilita o botão "Ativar"
-		        }
-		    }
-		});
-
-		// Botão para ativar a conta
-		botaoAtivar = new JButton("Ativar"); // Mova a inicialização do botão para cá
-		botaoAtivar.setBounds(220, 650, 100, 30);
-		botaoAtivar.setBackground(new Color(0, 191, 255));
-		botaoAtivar.setFont(new Font("Arial", Font.BOLD, 12));
-
-		botaoAtivar.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		        String codigoAtivacao = campoAtivacao.getText();
-
-		        if (modoEdicao) {
-		            if (salvarAlteracoesCliente(codigoAtivacao)) {
-		                JOptionPane.showMessageDialog(janela, "Dados atualizados com sucesso.");
-		                ativarContaDoCliente(codigoAtivacao); // Ativa a conta após a atualização
-		                limparCampos(); // Limpe os campos após ativar a conta
-		            } else {
-		                JOptionPane.showMessageDialog(janela, "Falha ao atualizar os dados.");
-		            }
-		        } else {
-		            // Adicione o segundo parâmetro para decidir se deve mostrar a notificação
-		            boolean ativacaoValida = verificarAtivacaoCliente(codigoAtivacao, true);
-
-		            if (ativacaoValida) {
-		                ativarContaDoCliente(codigoAtivacao); // Ativa a conta
-		                JOptionPane.showMessageDialog(janela, "Conta ativada com sucesso.");
-		                limparCampos(); // Limpe os campos após ativar a conta
-		            }
-		        }
-		    }
-		});
-
-		painel.add(botaoAtivar);
+        botaoEditarSalvar.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (modoEdicao) {
+                    if (salvarAlteracoes()) {
+                        JOptionPane.showMessageDialog(janela, "Dados atualizados com sucesso.");
+                        usuarioDAO.ativarContaDoCliente(codigoAtivacao);
+                        limparCampos();
+                    } else {
+                        JOptionPane.showMessageDialog(janela, "Falha ao atualizar os dados.");
+                    }
+                } else {
+                    ativarModoEdicao();
+                }
+            }
+        });
 
 		// Adicione os componentes ao painel
 		painel.add(rotuloInstrucoes);
@@ -280,6 +285,7 @@ public class Ativacao {
 		painel.add(rotuloComoConheceu);
 		painel.add(campoComoConheceu);
 		painel.add(botaoEditarSalvar);
+		painel.add(botaoAtivar);
 
 		janela.add(painel);
 		janela.setLocationRelativeTo(null);
@@ -287,40 +293,47 @@ public class Ativacao {
 	}
 
 	/**
-     * Preenche os campos com os dados do cliente.
-     */
-	
+	 * Preenche os campos com os dados do cliente.
+	 */
+
 	public static void preencherDadosCliente() {
-		usuarioAtivacao = campoAtivacao.getText();
-		try {
-			String sql = "SELECT Nome, Telefone, Telefone_responsavel, CPF, Data_nasc, email, Cidade, Estado, Como_conheceu FROM Cliente WHERE Usuario = ? AND Ativado = 0"; // Adicione
-																																						// 0
-			PreparedStatement st = con.prepareStatement(sql);
-			st.setString(1, usuarioAtivacao);
-			ResultSet rs = st.executeQuery();
-			if (rs.next()) {
-				campoNome.setText(rs.getString("Nome"));
-				campoTelefone.setText(rs.getString("Telefone"));
-				campoTelefoneResponsavel.setText(rs.getString("Telefone_responsavel"));
-				campoCPF.setText(rs.getString("CPF"));
-				campoDataNascimento.setText(rs.getString("Data_nasc"));
-				campoEmail.setText(rs.getString("email"));
-				campoCidade.setText(rs.getString("Cidade"));
-				campoEstado.setText(rs.getString("Estado"));
-				campoComoConheceu.setText(rs.getString("Como_conheceu"));
-			} else {
-				JOptionPane.showMessageDialog(null, "Cliente já ativado ou código inválido.");
-				limparCampos();
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
+		String codigoAtivacao = campoAtivacao.getText();
+		UsuarioDAO usuarioDAO = new UsuarioDAO(); // Crie uma instância de UsuarioDAO
+		Cliente cliente = usuarioDAO.verificarAtivacaoCliente(codigoAtivacao, true);
+
+		if (cliente != null) {
+			campoNome.setText(cliente.getNome());
+			campoTelefone.setText(cliente.getTelefone());
+			campoTelefoneResponsavel.setText(cliente.getTelefoneResponsavel());
+			campoCPF.setText(cliente.getCpf());
+			campoDataNascimento.setText(cliente.getDataNascimento());
+			campoEmail.setText(cliente.getEmail());
+			campoCidade.setText(cliente.getCidade());
+			campoEstado.setText(cliente.getEstado());
+			campoComoConheceu.setText(cliente.getComoConheceu());
+		} else {
+			limparCampos();
 		}
 	}
 
-	 /**
-     * Limpa os campos de entrada de dados.
-     */
-	
+	/**
+	 * Salva as alterações do cliente.
+	 * 
+	 * @return true se as alterações foram salvas com sucesso, false caso contrário.
+	 */
+	private static boolean salvarAlteracoes() {
+		String codigoAtivacao = campoAtivacao.getText();
+		UsuarioDAO usuarioDAO = new UsuarioDAO();
+
+		return usuarioDAO.salvarAlteracoesCliente(codigoAtivacao, campoNome.getText(), campoTelefone.getText(),
+				campoTelefoneResponsavel.getText(), campoCPF.getText(), campoDataNascimento.getText(),
+				campoEmail.getText(), campoCidade.getText(), campoEstado.getText(), campoComoConheceu.getText());
+	}
+
+	/**
+	 * Limpa os campos de entrada de dados.
+	 */
+
 	public static void limparCampos() {
 		campoNome.setText("");
 		campoTelefone.setText("");
@@ -336,7 +349,9 @@ public class Ativacao {
 	/**
 	 * Ativa o modo de edição, permitindo a edição dos campos de entrada de dados.
 	 */
-	public static void ativarModoEdicao() {
+	private static void ativarModoEdicao() {
+		modoEdicao = true;
+		botaoEditarSalvar.setText("Salvar");
 		campoNome.setEditable(true);
 		campoTelefone.setEditable(true);
 		campoTelefoneResponsavel.setEditable(true);
@@ -346,11 +361,14 @@ public class Ativacao {
 		campoCidade.setEditable(true);
 		campoEstado.setEditable(true);
 		campoComoConheceu.setEditable(true);
+		botaoAtivar.setEnabled(false); // Desabilita o botão "Ativar" no modo de edição
 	}
 
 	/**
-	 * Ativa o modo de visualização, tornando os campos de entrada de dados somente leitura.
+	 * Ativa o modo de visualização, tornando os campos de entrada de dados somente
+	 * leitura.
 	 */
+
 	public static void ativarModoVisualizacao() {
 		campoNome.setEditable(false);
 		campoTelefone.setEditable(false);
@@ -362,104 +380,5 @@ public class Ativacao {
 		campoEstado.setEditable(false);
 		campoComoConheceu.setEditable(false);
 	}
-
-	
-	/**
-	 * Ativa a conta de cliente após a verificação do código de ativação.
-	 *
-	 * @param codigoAtivacao O código de ativação a ser verificado e usado para ativar a conta.
-	 */
-	public static void ativarContaDoCliente(String codigoAtivacao) {
-		try {
-			String sql = "UPDATE Cliente SET Ativado = 1 WHERE Usuario = ? AND Ativado = 0";
-			PreparedStatement st = con.prepareStatement(sql);
-			st.setString(1, usuarioAtivacao);
-			int rowsAffected = st.executeUpdate();
-			if (rowsAffected > 0) {
-				JOptionPane.showMessageDialog(null, "Conta ativada com sucesso.");
-			} else {
-				JOptionPane.showMessageDialog(null, "Falha ao ativar a conta.");
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Salva as alterações feitas nos campos de dados do cliente.
-	 *
-	 * @param codigoAtivacao O código de ativação associado ao cliente cujos dados estão sendo atualizados.
-	 * @return Verdadeiro se as alterações forem salvas com sucesso, falso caso contrário.
-	 */
-	public static boolean salvarAlteracoesCliente(String codigoAtivacao) {
-		try {
-			String sql = "UPDATE Cliente SET Nome = ?, Telefone = ?, Telefone_responsavel = ?, CPF = ?, Data_nasc = ?, email = ?, Cidade = ?, Estado = ?, Como_conheceu = ? WHERE Usuario = ? AND Ativado = 0";
-			PreparedStatement st = con.prepareStatement(sql);
-			st.setString(1, campoNome.getText());
-			st.setString(2, campoTelefone.getText());
-			st.setString(3, campoTelefoneResponsavel.getText());
-			st.setString(4, campoCPF.getText());
-			st.setString(5, campoDataNascimento.getText());
-			st.setString(6, campoEmail.getText());
-			st.setString(7, campoCidade.getText());
-			st.setString(8, campoEstado.getText());
-			st.setString(9, campoComoConheceu.getText());
-			st.setString(10, usuarioAtivacao);
-
-			int rowsAffected = st.executeUpdate();
-
-			return rowsAffected > 0;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		return false;
-	}
-
-	/**
-	 * Verifica se a ativação do cliente é válida.
-	 *
-	 * @param codigoAtivacao O código de ativação a ser verificado.
-	 * @return Verdadeiro se a ativação for válida, falso caso contrário.
-	 */
-
-	public static boolean verificarAtivacaoCliente(String codigoAtivacao, boolean mostrarNotificacao) {
-	    try {
-	        String sql = "SELECT COUNT(*) AS Count FROM Cliente WHERE Usuario = ?";
-	        PreparedStatement st = con.prepareStatement(sql);
-	        st.setString(1, codigoAtivacao);
-	        ResultSet rs = st.executeQuery();
-	        rs.next();
-	        int count = rs.getInt("Count");
-
-	        if (!mostrarNotificacao) {
-	            return count > 0;
-	        } else {
-	            if (count > 0) {
-	                // Agora, verifique se o código está ativado ou não
-	                sql = "SELECT COUNT(*) AS Ativado FROM Cliente WHERE Ativado = 0 AND Usuario = ?";
-	                st = con.prepareStatement(sql);
-	                st.setString(1, codigoAtivacao);
-	                rs = st.executeQuery();
-	                rs.next();
-	                int ativado = rs.getInt("Ativado");
-
-	                if (ativado > 0) {
-	                    return true; // Código válido e não ativado
-	                } else {
-	                    JOptionPane.showMessageDialog(null, "Código já ativado.");
-	                    return false; // Código válido, mas já ativado
-	                }
-	            } else {
-	                JOptionPane.showMessageDialog(null, "Código inválido.");
-	                return false; // Código inválido
-	            }
-	        }
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
-	    return false;
-	}
-
 
 }

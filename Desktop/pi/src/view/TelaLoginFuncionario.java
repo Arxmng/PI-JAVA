@@ -12,13 +12,14 @@ import model.UsuarioDAO;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class TelaLoginFuncionario extends JFrame {
 
-    private JTextField campoUsuario;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private JTextField campoUsuario;
     private JPasswordField campoSenha;
     private TelaPrincipal telaPrincipal;
 

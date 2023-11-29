@@ -15,7 +15,11 @@ import java.awt.event.ActionListener;
 
 public class TelaLoginCliente extends JFrame {
 
-    private JTextField campoUsuario;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private JTextField campoUsuario;
     private JPasswordField campoSenha;
     private TelaCliente telaCliente;
 

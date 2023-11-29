@@ -85,7 +85,6 @@ public class TelaDeFilas extends JFrame {
 	private Date calcularHoraExpiracaoSessao(int tempoSessaoEmMinutos) {
 		// Obter a data e hora atual
 		Calendar calendar = Calendar.getInstance();
-		Date dataAtual = calendar.getTime();
 
 		// Adicionar o tempo de sessão em minutos à data atual
 		calendar.add(Calendar.MINUTE, tempoSessaoEmMinutos);

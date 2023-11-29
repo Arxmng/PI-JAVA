@@ -3,12 +3,16 @@ package view;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
-import java.awt.GridLayout;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class TelaCliente extends JFrame {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private TelaPrincipal telaPrincipal;
 	
     public TelaCliente(TelaPrincipal telaPrincipal) {

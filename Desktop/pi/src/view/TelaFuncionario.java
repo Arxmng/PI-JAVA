@@ -2,12 +2,15 @@ package view;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 public class TelaFuncionario extends JFrame {
 
-    public TelaFuncionario() {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	public TelaFuncionario() {
         setTitle("Tela do Funcionário");
         setSize(300, 200);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
