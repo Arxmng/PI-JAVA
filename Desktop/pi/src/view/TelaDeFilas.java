@@ -12,12 +12,22 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.*;
 
+/**
+ * A classe `TelaDeFilas` representa a interface gráfica para gerenciar filas de atendimento para diferentes serviços.
+ * Os clientes podem ser adicionados e removidos das filas, com opções para definir o tempo de sessão.
+ */
 public class TelaDeFilas extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private Map<String, DefaultListModel<Cliente>> filas;
 	UsuarioDAO usuarioDAO = new UsuarioDAO();
 	private static String codigoFuncionarioLogado;
 	
+	 /**
+     * Cria uma instância da classe `TelaDeFilas`.
+     * Inicializa a interface gráfica com abas para diferentes filas e botões para adicionar e remover clientes.
+     *
+     * @param codigoFuncionarioLogado O código do funcionário logado que será utilizado nas operações do banco de dados.
+     */
 	public TelaDeFilas(String codigoFuncionarioLogado) {
 		TelaDeFilas.codigoFuncionarioLogado = codigoFuncionarioLogado;
 		setTitle("Tela de Filas");
@@ -99,6 +109,12 @@ public class TelaDeFilas extends JFrame {
 		setVisible(true);
 	}
 
+	 /**
+     * Calcula a hora de expiração da sessão com base no tempo de sessão especificado.
+     *
+     * @param tempoSessaoEmMinutos O tempo de sessão em minutos.
+     * @return A data e hora de expiração da sessão.
+     */
 	private Date calcularHoraExpiracaoSessao(int tempoSessaoEmMinutos) {
 		// Obter a data e hora atual
 		Calendar calendar = Calendar.getInstance();
@@ -111,6 +127,13 @@ public class TelaDeFilas extends JFrame {
 		return horaExpiracao;
 	}
 
+	/**
+     * Inicia um temporizador para remover o cliente da fila após o tempo de sessão expirar.
+     *
+     * @param cliente      O cliente a ser removido.
+     * @param modeloLista  O modelo de lista associado à fila.
+     * @param tempoSessao  O tempo de sessão do cliente.
+     */
 	private void iniciarTemporizador(Cliente cliente, DefaultListModel<Cliente> modeloLista, int tempoSessao) {
 		if (cliente.getHoraEntradaSessao() != null) {
 			long tempoMilissegundos = tempoSessao * 60 * 1000; // Convertendo minutos para milissegundos
@@ -129,6 +152,13 @@ public class TelaDeFilas extends JFrame {
 		}
 	}
 
+	
+	 /**
+     * Adiciona um cliente à fila com a opção de definir o tempo de sessão.
+     *
+     * @param titulo        O título da fila.
+     * @param modeloLista   O modelo de lista associado à fila.
+     */
 	private void adicionarSessao(Cliente cliente, int tempoSessao) {
 		try {
 			// Obter o código da máquina (podendo ser adaptado para escolha do usuário)
@@ -152,7 +182,12 @@ public class TelaDeFilas extends JFrame {
 			e.printStackTrace();
 		}
 	}
-
+	
+	/**
+     * O método principal que inicia a aplicação criando uma instância de `TelaDeFilas`.
+     *
+     * @param args Os argumentos da linha de comando (não utilizados neste caso).
+     */
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override

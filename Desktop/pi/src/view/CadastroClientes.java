@@ -24,8 +24,18 @@ import javax.swing.text.MaskFormatter;
 import model.Cliente;
 import model.UsuarioDAO;
 
+/**
+ * A classe `CadastroClientes` é responsável por criar a interface gráfica para
+ * o cadastro de clientes. Ela permite que os funcionários insiram os dados de
+ * um novo cliente, como nome, email, CPF, entre outros.
+ */
 public class CadastroClientes {
 
+	/**
+	 * Método principal que inicia a interface gráfica para o cadastro de clientes.
+	 *
+	 * @param args Os argumentos da linha de comando (não utilizados).
+	 */
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -34,6 +44,9 @@ public class CadastroClientes {
 		});
 	}
 
+	/**
+	 * Cria a interface gráfica para o cadastro de clientes.
+	 */
 	public static void criarTelaCadastroClientes() {
 		JFrame janela = new JFrame("Cadastro de Clientes");
 		janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -47,6 +60,11 @@ public class CadastroClientes {
 		janela.setVisible(true);
 	}
 
+	/**
+	 * Cria um painel com os campos de cadastro e botões correspondentes.
+	 *
+	 * @return Um JPanel contendo os campos e botões para o cadastro.
+	 */
 	public static JPanel criarPainelCadastro() {
 		JPanel painel = new JPanel();
 		painel.setLayout(new GridLayout(10, 2));
@@ -114,18 +132,20 @@ public class CadastroClientes {
 				String cidade = campoCidade.getText();
 				String comoConheceu = campocomoConheceu.getText();
 
-				 // Crie um objeto Cliente com os dados
-		        Cliente cliente = new Cliente(nome, email, cpf, dataNascimento, telefone, telefoneResponsavel, estado, cidade, comoConheceu);
+				// Crie um objeto Cliente com os dados
+				Cliente cliente = new Cliente(nome, email, cpf, dataNascimento, telefone, telefoneResponsavel, estado,
+						cidade, comoConheceu);
 
-		        // Realize o cadastro
-		        UsuarioDAO usuarioDAO = new UsuarioDAO();
-		        boolean cadastradoComSucesso = usuarioDAO.cadastrarCliente(cliente);
+				// Realize o cadastro
+				UsuarioDAO usuarioDAO = new UsuarioDAO();
+				boolean cadastradoComSucesso = usuarioDAO.cadastrarCliente(cliente);
 
-		        if (cadastradoComSucesso) {
-		            JOptionPane.showMessageDialog(null, "Cliente cadastrado com sucesso.\nSeu Login é: " + cliente.getUsuario());
-		        } else {
-		            JOptionPane.showMessageDialog(null, "Falha ao cadastrar o cliente.");
-		        }
+				if (cadastradoComSucesso) {
+					JOptionPane.showMessageDialog(null,
+							"Cliente cadastrado com sucesso.\nSeu Login é: " + cliente.getUsuario());
+				} else {
+					JOptionPane.showMessageDialog(null, "Falha ao cadastrar o cliente.");
+				}
 			}
 		});
 
@@ -153,6 +173,11 @@ public class CadastroClientes {
 		return painel;
 	}
 
+	/**
+	 * Cria um campo de CPF formatado.
+	 *
+	 * @return Um JFormattedTextField para o CPF.
+	 */
 	public static JFormattedTextField criarCampoCPF() {
 		try {
 			MaskFormatter mascara = new MaskFormatter("###.###.###-##");
@@ -164,6 +189,11 @@ public class CadastroClientes {
 		}
 	}
 
+	/**
+	 * Cria um campo de telefone formatado.
+	 *
+	 * @return Um JFormattedTextField para o telefone.
+	 */
 	public static JFormattedTextField criarCampoTelefone() {
 		try {
 			MaskFormatter mascara = new MaskFormatter("(##) #####-####");
@@ -175,6 +205,11 @@ public class CadastroClientes {
 		}
 	}
 
+	/**
+	 * Cria um campo de data de nascimento formatado.
+	 *
+	 * @return Um JFormattedTextField para a data de nascimento.
+	 */
 	public static JFormattedTextField criarCampoDataNascimento() {
 		try {
 			MaskFormatter mascara = new MaskFormatter("##/##/####");
@@ -186,6 +221,11 @@ public class CadastroClientes {
 		}
 	}
 
+	/**
+	 * Cria um campo de estado com restrição de tamanho.
+	 *
+	 * @return Um JTextField para o estado.
+	 */
 	public static JTextField criarCampoEstado() {
 		JTextField campoEstado = new JTextField(2);
 
@@ -201,23 +241,25 @@ public class CadastroClientes {
 
 		return campoEstado;
 	}
-	
+
+	/**
+	 * Abre a tela de cadastro de clientes.
+	 */
 	public static void abrirTelaCadastroClientes() {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                JFrame janela = new JFrame("Cadastro de Clientes");
-                janela.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                janela.setSize(500, 500);
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				JFrame janela = new JFrame("Cadastro de Clientes");
+				janela.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				janela.setSize(500, 500);
 
-                JPanel painel = criarPainelCadastro();
+				JPanel painel = criarPainelCadastro();
 
-                janela.add(painel);
+				janela.add(painel);
 
-                janela.setLocationRelativeTo(null);
-                janela.setVisible(true);
-            }
-        });
-    }
+				janela.setLocationRelativeTo(null);
+				janela.setVisible(true);
+			}
+		});
+	}
 
-	
 }

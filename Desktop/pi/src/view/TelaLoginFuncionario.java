@@ -13,17 +13,23 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * A classe `TelaLoginFuncionario` representa a interface gráfica para o login de funcionários.
+ * Os funcionários utilizam esta tela para inserir suas credenciais e acessar a aplicação.
+ */
 public class TelaLoginFuncionario extends JFrame {
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private JTextField campoUsuario;
     private JPasswordField campoSenha;
     private TelaPrincipal telaPrincipal;
     private String loginFuncionario; 
 
+    /**
+     * Cria uma instância da classe `TelaLoginFuncionario`.
+     *
+     * @param telaPrincipal A tela principal associada a esta tela de login.
+     */
     public TelaLoginFuncionario(TelaPrincipal telaPrincipal) {
         this.telaPrincipal = telaPrincipal;
 
@@ -59,6 +65,9 @@ public class TelaLoginFuncionario extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * Realiza a tentativa de login usando as credenciais fornecidas pelo funcionário.
+     */
     private void realizarLogin() {
         String codFunc = campoUsuario.getText();
 
@@ -75,6 +84,11 @@ public class TelaLoginFuncionario extends JFrame {
         }
     }
 
+    /**
+     * Obtém o login do funcionário autenticado.
+     *
+     * @return O login do funcionário autenticado.
+     */
     public String getLoginFuncionario() {
         return loginFuncionario;
     }

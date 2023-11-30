@@ -13,17 +13,22 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * A classe `TelaLoginCliente` representa a interface gráfica para o login de clientes.
+ * Os clientes usam essa tela para inserir suas credenciais e acessar a aplicação.
+ */
 public class TelaLoginCliente extends JFrame {
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private JTextField campoUsuario;
     private JPasswordField campoSenha;
     private TelaCliente telaCliente;
 
-    
+    /**
+     * Cria uma instância da classe `TelaLoginCliente`.
+     *
+     * @param telaCliente A tela principal do cliente associada a esta tela de login.
+     */
     public TelaLoginCliente(TelaCliente telaCliente) {
         this.telaCliente = telaCliente;
 
@@ -59,6 +64,9 @@ public class TelaLoginCliente extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * Realiza a tentativa de login usando as credenciais fornecidas pelo cliente.
+     */
     private void realizarLogin() {
         String usuario = campoUsuario.getText();
 

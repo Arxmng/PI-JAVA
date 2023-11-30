@@ -25,10 +25,9 @@ public class Cliente {
 	private java.util.Date horaExpiracaoSessao;
 
 	/**
-	 * Cria um novo objeto Cliente com informações pessoais.
-	 *
+	 * Cria um novo objeto Cliente com informações pessoais e gera automaticamente um nome de usuário.
 	 * @param nome                O nome do cliente.
-	 * @param email               O endereço de e-mail do cliente.s
+	 * @param email               O endereço de e-mail do cliente.
 	 * @param cpf                 O número de CPF do cliente.
 	 * @param dataNascimento      A data de nascimento do cliente.
 	 * @param telefone            O número de telefone do cliente.
@@ -51,6 +50,11 @@ public class Cliente {
 		this.usuario = gerarUsuario(nome);
 	}
 
+	/**
+	 * Cria um objeto Cliente com base em um nome de usuário existente e uma lista de clientes.
+	 * @param usuario       O nome de usuário do cliente.
+	 * @param modeloLista   A lista de clientes utilizada para determinar a hora de entrada da sessão.
+	 */
 	public Cliente(String usuario, DefaultListModel<Cliente> modeloLista) {
 	    this.usuario = usuario;
 	    if (modeloLista != null && !modeloLista.isEmpty()) {
@@ -87,8 +91,11 @@ public class Cliente {
 
 		return usuario.toString();
 	}
-
-	@Override
+	
+	/**
+	 * Retorna uma representação em formato de string do objeto Cliente.
+	 * @return Uma string formatada contendo o ID do Cliente, hora de entrada e hora de expiração da sessão.
+	 */	@Override
 	public String toString() {
 	    SimpleDateFormat formatadorHora = new SimpleDateFormat("HH:mm:ss");
 	    String horaEntrada = horaEntradaSessao != null ? formatadorHora.format(horaEntradaSessao) : "N/A";

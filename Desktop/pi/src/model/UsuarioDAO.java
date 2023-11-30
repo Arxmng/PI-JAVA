@@ -69,6 +69,13 @@ public class UsuarioDAO {
 		return false;
 	}
 
+	/**
+	 * Cadastra um novo cliente no banco de dados.
+	 *
+	 * @param cliente O objeto Cliente a ser cadastrado.
+	 * @return `true` se o cadastro for bem-sucedido, `false` caso contrário.
+	 */
+	//
 	public boolean cadastrarCliente(Cliente cliente) {
 		sql = "INSERT INTO Cliente (Usuario, Nome, Telefone, Telefone_responsavel, CPF, Data_nasc, email, Cidade, Estado, Como_conheceu, Ativado) "
 				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -96,6 +103,15 @@ public class UsuarioDAO {
 		return false;
 	}
 
+	/**
+	 * Adiciona um novo usuário (cliente) ao banco de dados, verificando se ele já
+	 * existe.
+	 *
+	 * @param usuario O nome de usuário a ser verificado e adicionado.
+	 * @return `true` se o usuário foi adicionado com sucesso, `false` caso
+	 *         contrário.
+	 */
+	//
 	public boolean adicionarUsuario(String usuario) {
 		sql = "SELECT COUNT(*) AS Count FROM Cliente WHERE Usuario = ? AND Ativado = 1";
 		try (PreparedStatement stmt = bd.con.prepareStatement(sql)) {
@@ -120,6 +136,7 @@ public class UsuarioDAO {
 	 * @param codigoAtivacao O código de ativação a ser verificado e usado para
 	 *                       ativar a conta.
 	 */
+	//
 	public void ativarContaDoCliente(String codigoAtivacao) {
 		try {
 			String sql = "UPDATE Cliente SET Ativado = 1 WHERE Usuario = ? AND Ativado = 0";
@@ -139,10 +156,12 @@ public class UsuarioDAO {
 	/**
 	 * Verifica se a ativação do cliente é válida.
 	 *
-	 * @param codigoAtivacao O código de ativação a ser verificado.
-	 * @return Verdadeiro se a ativação for válida, falso caso contrário.
+	 * @param codigoAtivacao  O código de ativação a ser verificado.
+	 * @param mostrarMensagem Indica se deve exibir mensagens de erro.
+	 * @return O objeto Cliente associado ao código de ativação, ou null se a
+	 *         ativação não for válida.
 	 */
-
+	//
 	public Cliente verificarAtivacaoCliente(String codigoAtivacao, boolean mostrarMensagem) {
 		Cliente cliente = null;
 		try {
@@ -168,6 +187,21 @@ public class UsuarioDAO {
 		return cliente;
 	}
 
+	/**
+     * Salva as alterações de dados do cliente no banco de dados.
+     *
+     * @param usuarioAtivacao O nome de usuário do cliente a ser modificado.
+     * @param nome            O novo nome do cliente.
+     * @param telefone        O novo número de telefone do cliente.
+     * @param telefoneResponsavel O novo número de telefone do responsável do cliente.
+     * @param cpf             O novo CPF do cliente.
+     * @param dataNascimento  A nova data de nascimento do cliente.
+     * @param email           O novo endereço de e-mail do cliente.
+     * @param cidade          A nova cidade do cliente.
+     * @param estado          O novo estado do cliente.
+     * @param comoConheceu    A nova fonte pela qual o cliente conheceu o serviço.
+     * @return `true` se as alterações foram salvas com sucesso, `false` caso contrário.
+     */
 	public boolean salvarAlteracoesCliente(String usuarioAtivacao, String nome, String telefone,
 			String telefoneResponsavel, String cpf, String dataNascimento, String email, String cidade, String estado,
 			String comoConheceu) {
@@ -196,37 +230,46 @@ public class UsuarioDAO {
 		return false;
 	}
 	
-	public void adicionarSessao(String usuario, String codigoMaquina, Date dataSQL, Time horaInicio, Time horaFim, String codigoFuncionario) {
-	    try {
-	        String sql = "INSERT INTO Sessao (preco, dia, hora_inicio, hora_fim, Usuario, Codigo_func, Codigo_maq) " +
-	                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
-	        
-	        // Preço pode ser 0, conforme mencionado
-	        float preco = 0;
+	/**
+     * Adiciona uma nova sessão ao banco de dados.
+     *
+     * @param usuario           O nome de usuário do cliente associado à sessão.
+     * @param codigoMaquina     O código da máquina associada à sessão.
+     * @param dataSQL           A data da sessão em formato SQL.
+     * @param horaInicio        A hora de início da sessão.
+     * @param horaFim           A hora de término da sessão.
+     * @param codigoFuncionario O código do funcionário associado à sessão.
+     */
+	public void adicionarSessao(String usuario, String codigoMaquina, Date dataSQL, Time horaInicio, Time horaFim,
+			String codigoFuncionario) {
+		try {
+			String sql = "INSERT INTO Sessao (preco, dia, hora_inicio, hora_fim, Usuario, Codigo_func, Codigo_maq) "
+					+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-	        try (PreparedStatement st = bd.con.prepareStatement(sql)) {
-	            st.setFloat(1, preco);
-	            st.setDate(2, dataSQL);
-	            st.setTime(3, horaInicio);
-	            st.setTime(4, horaFim);
-	            st.setString(5, usuario);
-	            st.setString(6, codigoFuncionario);
-	            st.setString(7, codigoMaquina);
+			// Preço pode ser 0, conforme mencionado
+			float preco = 0;
 
-	            int rowsAffected = st.executeUpdate();
+			try (PreparedStatement st = bd.con.prepareStatement(sql)) {
+				st.setFloat(1, preco);
+				st.setDate(2, dataSQL);
+				st.setTime(3, horaInicio);
+				st.setTime(4, horaFim);
+				st.setString(5, usuario);
+				st.setString(6, codigoFuncionario);
+				st.setString(7, codigoMaquina);
 
-	            if (rowsAffected > 0) {
-	                JOptionPane.showMessageDialog(null, "Sessão adicionada com sucesso.");
-	            } else {
-	                JOptionPane.showMessageDialog(null, "Falha ao adicionar a sessão.");
-	            }
-	        }
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
+				int rowsAffected = st.executeUpdate();
+
+				if (rowsAffected > 0) {
+					JOptionPane.showMessageDialog(null, "Sessão adicionada com sucesso.");
+				} else {
+					JOptionPane.showMessageDialog(null, "Falha ao adicionar a sessão.");
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
-
-
 
 	/**
 	 * Fecha a conexão com o banco de dados. Chame este método quando finalizar
@@ -236,5 +279,4 @@ public class UsuarioDAO {
 		bd.close();
 	}
 
-	
 }
