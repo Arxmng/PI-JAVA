@@ -36,6 +36,8 @@ public class Cliente {
 	 * @param cidade              A cidade onde o cliente reside.
 	 * @param comoConheceu        A fonte pela qual o cliente conheceu o serviço.
 	 */
+
+
 	public Cliente(String nome, String email, String cpf, String dataNascimento, String telefone,
 			String telefoneResponsavel, String estado, String cidade, String comoConheceu) {
 		this.nome = nome;
@@ -49,6 +51,7 @@ public class Cliente {
 		this.comoConheceu = comoConheceu;
 		this.usuario = gerarUsuario(nome);
 	}
+	
 
 	/**
 	 * Cria um objeto Cliente com base em um nome de usuário existente e uma lista de clientes.

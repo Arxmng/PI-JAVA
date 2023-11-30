@@ -64,10 +64,11 @@ insert into maquina values ('pc3', 'computador', '30');
 insert into maquina values ('pc4', 'computador', '30');
 insert into maquina values ('pc5', 'computador', '30');
 insert into maquina values ('xbox1', 'console', '25');
-insert into maquina values ('xbox2', 'console', '25');
 insert into maquina values ('play1', 'console', '25');
-insert into maquina values ('play2', 'console', '25');
 insert into maquina values ('switch1', 'console', '20');
+insert into maquina values ('simulador1', 'simulador', '35');
+insert into maquina values ('vr1', 'vr', '30');
+
 
 
 INSERT INTO sessao VALUES (50, '2023-10-23', '09:00', '11:00', 'frede123', 'maria123', 'play1');

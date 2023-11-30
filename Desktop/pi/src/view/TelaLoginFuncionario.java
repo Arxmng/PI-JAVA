@@ -70,7 +70,6 @@ public class TelaLoginFuncionario extends JFrame {
      */
     private void realizarLogin() {
         String codFunc = campoUsuario.getText();
-
         UsuarioDAO usuarioDAO = new UsuarioDAO();
 
         // Verificar as credenciais usando o UsuarioDAO

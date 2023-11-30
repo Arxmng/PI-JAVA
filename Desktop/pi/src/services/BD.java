@@ -48,7 +48,7 @@ public class BD {
 	public BD() {
 		try {
 			BufferedReader br = new BufferedReader(
-					new FileReader("banco.txt"));
+					new FileReader("C:\\Users\\Amanda Cacko\\Desktop\\pi\\src\\services\\banco.txt"));
 			driver = br.readLine();
 			databaseName = br.readLine();
 			url = br.readLine() + databaseName;

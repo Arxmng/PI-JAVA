@@ -118,35 +118,34 @@ public class CadastroClientes {
 			}
 		});
 
-		JButton jButton = new JButton();
-		jButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				// Obtenha os dados do cliente a partir dos campos
-				String nome = campoNome.getText();
-				String email = campoEmail.getText();
-				String cpf = campoCPF.getText();
-				String dataNascimento = campoDataNascimento.getText();
-				String telefone = campoTelefone.getText();
-				String telefoneResponsavel = campoTelefoneResponsavel.getText();
-				String estado = campoEstado.getText();
-				String cidade = campoCidade.getText();
-				String comoConheceu = campocomoConheceu.getText();
+		botaoCadastrar.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        // Obtenha os dados do cliente a partir dos campos
+		        String nome = campoNome.getText();
+		        String email = campoEmail.getText();
+		        String cpf = campoCPF.getText();
+		        String dataNascimento = campoDataNascimento.getText();
+		        String telefone = campoTelefone.getText();
+		        String telefoneResponsavel = campoTelefoneResponsavel.getText();
+		        String estado = campoEstado.getText();
+		        String cidade = campoCidade.getText();
+		        String comoConheceu = campocomoConheceu.getText();
 
-				// Crie um objeto Cliente com os dados
-				Cliente cliente = new Cliente(nome, email, cpf, dataNascimento, telefone, telefoneResponsavel, estado,
-						cidade, comoConheceu);
+		        // Crie um objeto Cliente com os dados
+		        Cliente cliente = new Cliente(nome, email, cpf, dataNascimento, telefone, telefoneResponsavel, estado,
+		                cidade, comoConheceu);
 
-				// Realize o cadastro
-				UsuarioDAO usuarioDAO = new UsuarioDAO();
-				boolean cadastradoComSucesso = usuarioDAO.cadastrarCliente(cliente);
+		        // Realize o cadastro
+		        UsuarioDAO usuarioDAO = new UsuarioDAO();
+		        boolean cadastradoComSucesso = usuarioDAO.cadastrarCliente(cliente);
 
-				if (cadastradoComSucesso) {
-					JOptionPane.showMessageDialog(null,
-							"Cliente cadastrado com sucesso.\nSeu Login é: " + cliente.getUsuario());
-				} else {
-					JOptionPane.showMessageDialog(null, "Falha ao cadastrar o cliente.");
-				}
-			}
+		        if (cadastradoComSucesso) {
+		            JOptionPane.showMessageDialog(null,
+		                    "Cliente cadastrado com sucesso.\nSeu Login é: " + cliente.getUsuario());
+		        } else {
+		            JOptionPane.showMessageDialog(null, "Falha ao cadastrar o cliente.");
+		        }
+		    }
 		});
 
 		painel.add(rotuloNome);
@@ -196,7 +195,7 @@ public class CadastroClientes {
 	 */
 	public static JFormattedTextField criarCampoTelefone() {
 		try {
-			MaskFormatter mascara = new MaskFormatter("(##) #####-####");
+			MaskFormatter mascara = new MaskFormatter("(##)#####-####");
 			JFormattedTextField campoTelefone = new JFormattedTextField(mascara);
 			return campoTelefone;
 		} catch (ParseException e) {
