@@ -231,45 +231,62 @@ public class UsuarioDAO {
 	}
 	
 	/**
-     * Adiciona uma nova sessão ao banco de dados.
-     *
-     * @param usuario           O nome de usuário do cliente associado à sessão.
-     * @param codigoMaquina     O código da máquina associada à sessão.
-     * @param dataSQL           A data da sessão em formato SQL.
-     * @param horaInicio        A hora de início da sessão.
-     * @param horaFim           A hora de término da sessão.
-     * @param codigoFuncionario O código do funcionário associado à sessão.
-     */
+	 * Adiciona uma nova sessão ao banco de dados.
+	 *
+	 * @param usuario           O nome de usuário do cliente associado à sessão.
+	 * @param codigoMaquina     O código da máquina associada à sessão.
+	 * @param dataSQL           A data da sessão em formato SQL.
+	 * @param horaInicio        A hora de início da sessão.
+	 * @param horaFim           A hora de término da sessão.
+	 * @param codigoFuncionario O código do funcionário associado à sessão.
+	 */
 	public void adicionarSessao(String usuario, String codigoMaquina, Date dataSQL, Time horaInicio, Time horaFim,
-			String codigoFuncionario) {
-		try {
-			String sql = "INSERT INTO Sessao (preco, dia, hora_inicio, hora_fim, Usuario, Codigo_func, Codigo_maq) "
-					+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
+	        String codigoFuncionario) {
+	    try {
+	        String sql = "INSERT INTO Sessao (preco, dia, hora_inicio, hora_fim, Usuario, Codigo_func, Codigo_maq) "
+	                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-			// Preço pode ser 0, conforme mencionado
-			float preco = 0;
+	        // Preço pode ser 0, conforme mencionado
+	        float preco = 0;
 
-			try (PreparedStatement st = bd.con.prepareStatement(sql)) {
-				st.setFloat(1, preco);
-				st.setDate(2, dataSQL);
-				st.setTime(3, horaInicio);
-				st.setTime(4, horaFim);
-				st.setString(5, usuario);
-				st.setString(6, codigoFuncionario);
-				st.setString(7, codigoMaquina);
+	        try (PreparedStatement st = bd.con.prepareStatement(sql)) {
+	            st.setFloat(1, preco);
+	            st.setDate(2, dataSQL);
+	            st.setTime(3, horaInicio);
+	            st.setTime(4, horaFim);
+	            st.setString(5, usuario);
+	            st.setString(6, codigoFuncionario);
+	            st.setString(7, codigoMaquina);
 
-				int rowsAffected = st.executeUpdate();
+	            int rowsAffected = st.executeUpdate();
+	            bd.con.commit();
 
-				if (rowsAffected > 0) {
-					JOptionPane.showMessageDialog(null, "Sessão adicionada com sucesso.");
-				} else {
-					JOptionPane.showMessageDialog(null, "Falha ao adicionar a sessão.");
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	            if (rowsAffected > 0) {
+	                JOptionPane.showMessageDialog(null, "Sessão adicionada com sucesso.");
+	            } else {
+	                JOptionPane.showMessageDialog(null, "Falha ao adicionar a sessão.");
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
 	}
+
+	public boolean verificarCodigoMaquinaExistente(String codigoMaquina) {
+	    String sql = "SELECT COUNT(*) AS Count FROM Maquina WHERE Codigo_maq = ?";
+	    try (PreparedStatement stmt = bd.con.prepareStatement(sql)) {
+	        stmt.setString(1, codigoMaquina);
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            rs.next();
+	            int count = rs.getInt("Count");
+	            return count > 0;
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return false;
+	}
+
 
 	/**
 	 * Fecha a conexão com o banco de dados. Chame este método quando finalizar

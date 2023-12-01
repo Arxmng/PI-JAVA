@@ -37,7 +37,6 @@ public class Cliente {
 	 * @param comoConheceu        A fonte pela qual o cliente conheceu o serviço.
 	 */
 
-
 	public Cliente(String nome, String email, String cpf, String dataNascimento, String telefone,
 			String telefoneResponsavel, String estado, String cidade, String comoConheceu) {
 		this.nome = nome;

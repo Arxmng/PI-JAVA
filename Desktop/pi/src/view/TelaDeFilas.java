@@ -13,255 +13,220 @@ import java.awt.event.WindowEvent;
 import java.util.*;
 
 /**
- * A classe `TelaDeFilas` representa a interface gráfica para gerenciar filas de
- * atendimento para diferentes serviços. Os clientes podem ser adicionados e
- * removidos das filas, com opções para definir o tempo de sessão.
+ * A classe `TelaDeFilas` representa a interface gráfica para gerenciar filas de atendimento para diferentes serviços.
+ * Os clientes podem ser adicionados e removidos das filas, com opções para definir o tempo de sessão.
  */
 public class TelaDeFilas extends JFrame {
-    private static final long serialVersionUID = 1L;
-    private Map<String, DefaultListModel<Cliente>> filas;
-    UsuarioDAO usuarioDAO = new UsuarioDAO();
-    private static String codigoFuncionarioLogado;
-
-    /**
+	private static final long serialVersionUID = 1L;
+	private Map<String, DefaultListModel<Cliente>> filas;
+	UsuarioDAO usuarioDAO = new UsuarioDAO();
+	private static String codigoFuncionarioLogado;
+	
+	 /**
      * Cria uma instância da classe `TelaDeFilas`.
      * Inicializa a interface gráfica com abas para diferentes filas e botões para adicionar e remover clientes.
      *
      * @param codigoFuncionarioLogado O código do funcionário logado que será utilizado nas operações do banco de dados.
      */
-    public TelaDeFilas(String codigoFuncionarioLogado) {
-        TelaDeFilas.codigoFuncionarioLogado = codigoFuncionarioLogado;
-        setTitle("Tela de Filas");
-        setSize(800, 600); // Adjust the size as needed
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
+	public TelaDeFilas(String codigoFuncionarioLogado) {
+		TelaDeFilas.codigoFuncionarioLogado = codigoFuncionarioLogado;
+		setTitle("Tela de Filas");
+		setSize(600, 400);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setLocationRelativeTo(null);
 
-        JTabbedPane abas = new JTabbedPane();
-        String[] titulos = { "PC's", "Consoles", "Simuladores", "VR's" };
-        filas = new HashMap<>();
+		JTabbedPane abas = new JTabbedPane();
+		String[] titulos = { "PC's", "Consoles", "Simuladores", "VR's" };
+		filas = new HashMap<>();
 
-        for (String titulo : titulos) {
-            DefaultListModel<Cliente> modeloLista = new DefaultListModel<>();
-            JList<Cliente> listaPessoas = new JList<>(modeloLista);
-            filas.put(titulo, modeloLista);
+		for (String titulo : titulos) {
+			DefaultListModel<Cliente> modeloLista = new DefaultListModel<>();
+			JList<Cliente> listaPessoas = new JList<>(modeloLista);
+			filas.put(titulo, modeloLista);
 
-            JPanel aba = new JPanel();
-            aba.setLayout(new BorderLayout());
+			JPanel aba = new JPanel();
+			aba.setLayout(new BorderLayout());
+			JButton botaoAdicionar = new JButton("Adicionar Pessoa");
+			botaoAdicionar.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					String usuario = JOptionPane.showInputDialog("Insira o ID do usuário:");
+					if (usuario != null && !usuario.isEmpty()) {
+						boolean clienteAtivo = usuarioDAO.verificarClienteAtivo(usuario);
+						if (clienteAtivo) {
+							// Solicita ao usuário o tempo de sessão desejado
+							String tempoSessaoStr = JOptionPane.showInputDialog("Quanto tempo de sessão (em minutos)?");
+							if (tempoSessaoStr != null && !tempoSessaoStr.isEmpty()) {
+								try {
+									int tempoSessao = Integer.parseInt(tempoSessaoStr);
+									Cliente cliente = new Cliente(usuario, modeloLista);
 
-            if (titulo.equals("PC's")) {
-                // Adiciona abas adicionais dentro de "PC's"
-                JTabbedPane subAbas = new JTabbedPane();
+									// Adiciona uma nova sessão ao banco de dados
+									adicionarSessao(cliente, tempoSessao);
 
-                for (int i = 1; i <= 5; i++) {
-                    String subTitulo = titulo + " " + i;
-                    JPanel subAba = new JPanel();
-                    subAba.setLayout(new BorderLayout());
-                    subAba.add(new JScrollPane(new JList<>(new DefaultListModel<>())), BorderLayout.CENTER);
-                    subAbas.addTab(subTitulo, subAba);
-                }
+									cliente.setHoraExpiracaoSessao(calcularHoraExpiracaoSessao(tempoSessao));
+									modeloLista.addElement(cliente);
+									iniciarTemporizador(cliente, modeloLista, tempoSessao);
+								} catch (NumberFormatException ex) {
+									JOptionPane.showMessageDialog(null,
+											"Por favor, insira um valor válido para o tempo de sessão.");
+								}
+							} else {
+								JOptionPane.showMessageDialog(null, "Tempo de sessão não especificado.");
+							}
+						} else {
+							JOptionPane.showMessageDialog(null,
+									"Cliente não encontrado ou não está ativo no banco de dados.");
+						}
+					}
+				}
+			});
 
-                aba.add(subAbas, BorderLayout.CENTER);
-            } else if (titulo.equals("Consoles")) {
-                // Adiciona abas adicionais dentro de "Consoles"
-                JTabbedPane subAbas = new JTabbedPane();
+			JButton botaoRemover = new JButton("Remover Pessoa");
+			botaoRemover.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Cliente clienteSelecionado = listaPessoas.getSelectedValue();
+					if (clienteSelecionado != null) {
+						modeloLista.removeElement(clienteSelecionado);
+					} else {
+						JOptionPane.showMessageDialog(null, "Selecione uma pessoa para remover.");
+					}
+				}
+			});
 
-                String[] consoles = { "Playstation", "Xbox", "Nintendo" };
+			JPanel botoes = new JPanel();
+			botoes.add(botaoAdicionar);
+			botoes.add(botaoRemover);
 
-                for (String console : consoles) {
-                    JPanel subAba = new JPanel();
-                    subAba.setLayout(new BorderLayout());
-                    subAba.add(new JScrollPane(new JList<>(new DefaultListModel<>())), BorderLayout.CENTER);
-                    subAbas.addTab(console, subAba);
-                }
+			aba.add(new JScrollPane(listaPessoas), BorderLayout.CENTER);
+			aba.add(botoes, BorderLayout.SOUTH);
 
-                aba.add(subAbas, BorderLayout.CENTER);
-            } else {
-            	JButton botaoAdicionar = new JButton("Adicionar Pessoa");
-                botaoAdicionar.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                    	String usuario = JOptionPane.showInputDialog("Insira o ID do usuário:");
-                        if (usuario != null && !usuario.isEmpty()) {
-                            boolean clienteAtivo = usuarioDAO.verificarClienteAtivo(usuario);
-                            if (clienteAtivo) {
-                                // Solicita ao usuário o tempo de sessão desejado
-                                String tempoSessaoStr = JOptionPane.showInputDialog("Quanto tempo de sessão (em minutos)?");
-                                if (tempoSessaoStr != null && !tempoSessaoStr.isEmpty()) {
-                                    try {
-                                        int tempoSessao = Integer.parseInt(tempoSessaoStr);
-                                        Cliente cliente = new Cliente(usuario, modeloLista);
+			abas.addTab(titulo, aba);
+		}
 
-                                        // Adiciona uma nova sessão ao banco de dados
-                                        adicionarSessao(cliente, tempoSessao);
+		add(abas);
+		setVisible(true);
+	}
 
-                                        cliente.setHoraExpiracaoSessao(calcularHoraExpiracaoSessao(tempoSessao));
-                                        modeloLista.addElement(cliente);
-                                        iniciarTemporizador(cliente, modeloLista, tempoSessao);
-                                    } catch (NumberFormatException ex) {
-                                        JOptionPane.showMessageDialog(null,
-                                                "Por favor, insira um valor válido para o tempo de sessão.");
-                                    }
-                                } else {
-                                    JOptionPane.showMessageDialog(null, "Tempo de sessão não especificado.");
-                                }
-                            } else {
-                                JOptionPane.showMessageDialog(null,
-                                        "Cliente não encontrado ou não está ativo no banco de dados.");
-                            }
-                        }
-                    }
-                });
-
-                JButton botaoRemover = new JButton("Remover Pessoa");
-                botaoRemover.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        Cliente clienteSelecionado = listaPessoas.getSelectedValue();
-                        if (clienteSelecionado != null) {
-                            modeloLista.removeElement(clienteSelecionado);
-                        } else {
-                            JOptionPane.showMessageDialog(null, "Selecione uma pessoa para remover.");
-                        }
-                    }
-                });
-
-                JPanel botoesInferior = new JPanel();
-                botoesInferior.add(botaoAdicionar);
-                botoesInferior.add(botaoRemover);
-
-                JPanel conteudoAba = new JPanel(new BorderLayout());
-                
-                add(botoesInferior, BorderLayout.SOUTH);
-                conteudoAba.add(new JScrollPane(listaPessoas), BorderLayout.CENTER);
-                aba.add(conteudoAba, BorderLayout.CENTER);
-                setVisible(true);
-               
-            }
-
-            abas.addTab(titulo, aba);
-        }
-
-        add(abas);
-        setVisible(true);
-    }
-
-    /**
+	 /**
      * Calcula a hora de expiração da sessão com base no tempo de sessão especificado.
      *
      * @param tempoSessaoEmMinutos O tempo de sessão em minutos.
      * @return A data e hora de expiração da sessão.
      */
-    private Date calcularHoraExpiracaoSessao(int tempoSessaoEmMinutos) {
-        // Obter a data e hora atual
-        Calendar calendar = Calendar.getInstance();
+	private Date calcularHoraExpiracaoSessao(int tempoSessaoEmMinutos) {
+		// Obter a data e hora atual
+		Calendar calendar = Calendar.getInstance();
 
-        // Adicionar o tempo de sessão em minutos à data atual
-        calendar.add(Calendar.MINUTE, tempoSessaoEmMinutos);
-        Date horaExpiracao = calendar.getTime();
+		// Adicionar o tempo de sessão em minutos à data atual
+		calendar.add(Calendar.MINUTE, tempoSessaoEmMinutos);
+		Date horaExpiracao = calendar.getTime();
 
-        // Retornar a hora de expiração da sessão
-        return horaExpiracao;
-    }
+		// Retornar a hora de expiração da sessão
+		return horaExpiracao;
+	}
 
-    /**
+	/**
      * Inicia um temporizador para remover o cliente da fila após o tempo de sessão expirar.
      *
-     * @param cliente     O cliente a ser removido.
-     * @param modeloLista O modelo de lista associado à fila.
-     * @param tempoSessao O tempo de sessão do cliente.
+     * @param cliente      O cliente a ser removido.
+     * @param modeloLista  O modelo de lista associado à fila.
+     * @param tempoSessao  O tempo de sessão do cliente.
      */
-    private void iniciarTemporizador(Cliente cliente, DefaultListModel<Cliente> modeloLista, int tempoSessao) {
-        if (cliente.getHoraEntradaSessao() != null) {
-            long tempoMilissegundos = tempoSessao * 60 * 1000; // Convertendo minutos para milissegundos
-            long horaExpiracaoMilissegundos = cliente.getHoraEntradaSessao().getTime() + tempoMilissegundos;
+	private void iniciarTemporizador(Cliente cliente, DefaultListModel<Cliente> modeloLista, int tempoSessao) {
+		if (cliente.getHoraEntradaSessao() != null) {
+			long tempoMilissegundos = tempoSessao * 60 * 1000; // Convertendo minutos para milissegundos
+			long horaExpiracaoMilissegundos = cliente.getHoraEntradaSessao().getTime() + tempoMilissegundos;
 
-            java.util.Timer temporizador = new java.util.Timer();
-            temporizador.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    modeloLista.removeElement(cliente);
-                    temporizador.cancel();
-                }
-            }, horaExpiracaoMilissegundos);
-        } else {
-            System.out.println("A hora de entrada da sessão é null.");
-        }
-    }
+			java.util.Timer temporizador = new java.util.Timer();
+			temporizador.schedule(new TimerTask() {
+				@Override
+				public void run() {
+					modeloLista.removeElement(cliente);
+					temporizador.cancel();
+				}
+			}, horaExpiracaoMilissegundos);
+		} else {
+			System.out.println("A hora de entrada da sessão é null.");
+		}
+	}
 
-    /**
+	
+	 /**
      * Adiciona um cliente à fila com a opção de definir o tempo de sessão.
      *
-     * @param cliente     O cliente a ser removido.
-     * @param modeloLista O modelo de lista associado à fila.
+     * @param titulo        O título da fila.
+     * @param modeloLista   O modelo de lista associado à fila.
      */
-    private void adicionarSessao(Cliente cliente, int tempoSessao) {
-        try {
-            // Obter o código da máquina (podendo ser adaptado para escolha do usuário)
-            String codigoMaquina = JOptionPane.showInputDialog("Insira o código da máquina:");
+	private void adicionarSessao(Cliente cliente, int tempoSessao) {
+		try {
+			// Obter o código da máquina (podendo ser adaptado para escolha do usuário)
+			String codigoMaquina = JOptionPane.showInputDialog("Insira o código da máquina:");
 
-            // Obter a data e hora atuais
-            java.util.Date dataAtual = new java.util.Date();
-            java.sql.Date dataSQL = new java.sql.Date(dataAtual.getTime());
-            java.sql.Time horaInicio = new java.sql.Time(dataAtual.getTime());
+			// Obter a data e hora atuais
+			java.util.Date dataAtual = new java.util.Date();
+			java.sql.Date dataSQL = new java.sql.Date(dataAtual.getTime());
+			java.sql.Time horaInicio = new java.sql.Time(dataAtual.getTime());
 
-            // Calcular a hora de fim adicionando o tempo de sessão em minutos
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(dataAtual);
-            calendar.add(Calendar.MINUTE, tempoSessao);
-            java.sql.Time horaFim = new java.sql.Time(calendar.getTimeInMillis());
+			// Calcular a hora de fim adicionando o tempo de sessão em minutos
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(dataAtual);
+			calendar.add(Calendar.MINUTE, tempoSessao);
+			java.sql.Time horaFim = new java.sql.Time(calendar.getTimeInMillis());
 
-            // Adicionar a sessão com o código do funcionário logado
-            usuarioDAO.adicionarSessao(cliente.getUsuario(), codigoMaquina, dataSQL, horaInicio, horaFim,
-                    codigoFuncionarioLogado);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
+			// Adicionar a sessão com o código do funcionário logado
+			usuarioDAO.adicionarSessao(cliente.getUsuario(), codigoMaquina, dataSQL, horaInicio, horaFim,
+					codigoFuncionarioLogado);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
      * O método principal que inicia a aplicação criando uma instância de `TelaDeFilas`.
      *
      * @param args Os argumentos da linha de comando (não utilizados neste caso).
      */
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                TelaDeFilas telaDeFilas = new TelaDeFilas(codigoFuncionarioLogado);
-                telaDeFilas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                telaDeFilas.addWindowListener(new WindowAdapter() {
-                    @Override
-                    public void windowClosing(WindowEvent e) {
-                        // Fechar a conexão com o banco de dados ao fechar a janela
-                        telaDeFilas.usuarioDAO.fecharConexao();
-                    }
-                });
+	public static void main(String[] args) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				TelaDeFilas telaDeFilas = new TelaDeFilas(codigoFuncionarioLogado);
+				telaDeFilas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				telaDeFilas.addWindowListener(new WindowAdapter() {
+					@Override
+					public void windowClosing(WindowEvent e) {
+						// Fechar a conexão com o banco de dados ao fechar a janela
+						telaDeFilas.usuarioDAO.fecharConexao();
+					}
+				});
 
-                // Adiciona um cliente com a opção de definir o tempo de sessão
-                String usuario = JOptionPane.showInputDialog("Insira o ID do usuário:");
-                if (usuario != null && !usuario.isEmpty()) {
-                    boolean clienteAtivo = telaDeFilas.usuarioDAO.verificarClienteAtivo(usuario);
-                    if (clienteAtivo) {
-                        // Pergunta ao usuário quanto tempo de sessão deseja
-                        String tempoSessaoStr = JOptionPane.showInputDialog("Quanto tempo de sessão (em minutos)?");
-                        if (tempoSessaoStr != null && !tempoSessaoStr.isEmpty()) {
-                            try {
-                                int tempoSessao = Integer.parseInt(tempoSessaoStr);
-                                Cliente cliente = new Cliente(usuario, null);
-                                cliente.setHoraExpiracaoSessao(telaDeFilas.calcularHoraExpiracaoSessao(tempoSessao));
-                                telaDeFilas.filas.get("PC's").addElement(cliente);
-                                telaDeFilas.iniciarTemporizador(cliente, telaDeFilas.filas.get("PC's"), tempoSessao);
-                            } catch (NumberFormatException e) {
-                                JOptionPane.showMessageDialog(null,
-                                        "Por favor, insira um valor válido para o tempo de sessão.");
-                            }
-                        }
-                    } else {
-                        JOptionPane.showMessageDialog(null,
-                                "Cliente não encontrado ou não está ativo no banco de dados.");
-                    }
-                }
-            }
-        });
-    }
+				// Adiciona um cliente com a opção de definir o tempo de sessão
+				String usuario = JOptionPane.showInputDialog("Insira o ID do usuário:");
+				if (usuario != null && !usuario.isEmpty()) {
+					boolean clienteAtivo = telaDeFilas.usuarioDAO.verificarClienteAtivo(usuario);
+					if (clienteAtivo) {
+						// Pergunta ao usuário quanto tempo de sessão deseja
+						String tempoSessaoStr = JOptionPane.showInputDialog("Quanto tempo de sessão (em minutos)?");
+						if (tempoSessaoStr != null && !tempoSessaoStr.isEmpty()) {
+							try {
+								int tempoSessao = Integer.parseInt(tempoSessaoStr);
+								Cliente cliente = new Cliente(usuario, null);
+								cliente.setHoraExpiracaoSessao(telaDeFilas.calcularHoraExpiracaoSessao(tempoSessao));
+								telaDeFilas.filas.get("PC's").addElement(cliente);
+								telaDeFilas.iniciarTemporizador(cliente, telaDeFilas.filas.get("PC's"), tempoSessao);
+							} catch (NumberFormatException e) {
+								JOptionPane.showMessageDialog(null,
+										"Por favor, insira um valor válido para o tempo de sessão.");
+							}
+						}
+					} else {
+						JOptionPane.showMessageDialog(null,
+								"Cliente não encontrado ou não está ativo no banco de dados.");
+					}
+				}
+			}
+		});
+	}
 }

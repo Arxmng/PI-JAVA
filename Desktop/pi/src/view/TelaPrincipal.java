@@ -32,7 +32,7 @@ public class TelaPrincipal extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				abrirTelaFuncionario();
 			}
-		});
+		}); 
 
 		btnCliente.addActionListener(new ActionListener() {
 			@Override

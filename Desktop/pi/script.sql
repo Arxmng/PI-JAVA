@@ -81,3 +81,5 @@ INSERT INTO sessao VALUES (60, '2023-10-23', '08:00', '10:00', 'carlo123', 'carl
 INSERT INTO sessao VALUES (60, '2023-10-23', '08:00', '10:00', 'pedro123', 'carlo567', 'pc5');
 INSERT INTO sessao VALUES (50, '2023-10-23', '16:00', '17:00', 'joao123', 'isabe333', 'xbox1');
 INSERT INTO sessao VALUES (50, '2023-10-23', '16:00', '17:00', 'anama456', 'isabe333', 'xbox2');
+
+

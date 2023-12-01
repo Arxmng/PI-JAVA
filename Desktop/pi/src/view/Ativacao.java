@@ -62,7 +62,7 @@ public class Ativacao {
 		UsuarioDAO usuarioDAO = new UsuarioDAO();
 
 		JFrame janela = new JFrame("Ativação de Conta (Cliente)");
-		janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		janela.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		janela.setSize(400, 740);
 
 		JPanel painel = new JPanel();
